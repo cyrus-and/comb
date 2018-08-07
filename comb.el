@@ -5,7 +5,7 @@
 ;; Author: Andrea Cardaci <cyrus.and@gmail.com>
 ;; Version: 0.0.0
 ;; URL: https://github.com/cyrus-and/comb
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: matching
 
 ;;; Commentary:
