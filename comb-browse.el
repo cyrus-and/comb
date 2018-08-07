@@ -117,9 +117,9 @@
         " Showing "
         (cl-case (comb--status-filter)
           ('t (propertize "all" 'face 'bold))
-          ('nil (propertize "undecided" 'face 'warning))
-          ('approved (propertize "approved" 'face 'success))
-          ('rejected (propertize "rejected" 'face 'error)))
+          ('nil (propertize "undecided" 'face 'comb-undecided))
+          ('approved (propertize "approved" 'face 'comb-approved))
+          ('rejected (propertize "rejected" 'face 'comb-rejected)))
         (let ((filter (comb--notes-filter)))
           (unless (string-empty-p filter)
             (format " matching %s" (propertize filter 'face 'bold))))

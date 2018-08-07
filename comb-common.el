@@ -6,9 +6,24 @@
 
 (require 'cl-macs)
 
-(defface comb-match
-  '((t :inherit match))
+(defface comb-match '((t :inherit match))
   "Face used to highlight the matches."
+  :group 'comb)
+
+(defface comb-undecided '((t :inherit shadow))
+  "Face used to mark undecided results."
+  :group 'comb)
+
+(defface comb-approved '((t :inherit success))
+  "Face used to mark approved results."
+  :group 'comb)
+
+(defface comb-rejected '((t :inherit error))
+  "Face used to mark rejected results."
+  :group 'comb)
+
+(defface comb-notes '((t :inherit font-lock-comment-face))
+  "Face used to display the notes."
   :group 'comb)
 
 (defvar comb--window-configuration nil
@@ -17,13 +32,13 @@
 (defun comb--format-status (status)
   "Format result STATUS."
   (cl-case status
-    ('nil (propertize "UNDECIDED" 'face 'warning))
-    ('approved (propertize "APPROVED" 'face 'success))
-    ('rejected (propertize "REJECTED" 'face 'error))))
+    ('nil (propertize "UNDECIDED" 'face 'comb-undecided))
+    ('approved (propertize "APPROVED" 'face 'comb-approved))
+    ('rejected (propertize "REJECTED" 'face 'comb-rejected))))
 
 (defun comb--format-notes (notes)
   "Format result NOTES."
-  (propertize notes 'face 'font-lock-comment-face))
+  (propertize notes 'face 'comb-notes))
 
 (defun comb--format-file-location (path line)
   "Format file location (PATH and LINE)."
