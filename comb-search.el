@@ -10,24 +10,20 @@
   "Perform the lookup according to the session and save the results.
 
 In doing so the cursor is reset to the beginning."
-  (let (pattern root include-file exclude-path results)
+  (let (pattern results)
     ;; obtain the values from the session
-    (setq root (comb--session-root comb--session))
-    (setq pattern
-          (comb--merge-regexps (comb--session-patterns comb--session)))
-    (setq include-file
-          (comb--merge-regexps (comb--session-include-files comb--session)))
-    (setq exclude-path
-          (comb--merge-regexps (comb--session-exclude-paths comb--session)))
+    (setq pattern (comb--merge-regexps (comb--patterns)))
     (if pattern
         ;; perform the search handling errors
         (condition-case err
             (progn
-              (setq results
-                    (comb--find-grep pattern root include-file exclude-path))
+              (setq results (comb--find-grep
+                             pattern (comb--root)
+                             (comb--merge-regexps (comb--include-files))
+                             (comb--merge-regexps (comb--exclude-paths))))
               ;; replace the results
-              (setf (comb--session-results comb--session) results)
-              (setf (comb--session-cursor comb--session) -1))
+              (setf (comb--results) results)
+              (setf (comb--cursor) -1))
           (quit (message "Search aborted") nil)
           (file-error (message (error-message-string err)) nil))
       (message "No pattern specified") nil)))
