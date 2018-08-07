@@ -67,7 +67,6 @@
     ;; when a proper result has to be displayed
     (when (comb--valid-cursor-p)
       ;; prepare variables
-      (setq showing-result t)
       (setq result (comb--get-result))
       (setq info (comb--get-info result))
       (setq path (concat (file-name-as-directory (comb--root)) (car result)))
@@ -253,7 +252,7 @@ filter."
 
 (defun comb--menu-cycle-status-filter ()
   "Cycle among all the possible status filters."
-  (let (values filter next-filter)
+  (let (values)
     (setq values '(nil approved rejected t)) ; XXX nil must be the first value
     (setf (comb--status-filter) (cadr (member (comb--status-filter) values))))
   t)
@@ -314,15 +313,14 @@ filter."
    (setq buffer-read-only t)
    (progn (kill-buffer) (comb--browse))
    button-buffer-map
-   (let (keybindings max-length)
-     (setq keybindings comb--menu-keybindings)
+   (let (max-length)
      ;; find the key sequence maximum length
      (setq
       max-length
       (apply #'max (mapcar
                     (lambda (keybinding)
                       (length (symbol-value (car keybinding))))
-                    keybindings)))
+                    comb--menu-keybindings)))
      ;; format the help buffer
      (insert
       (mapconcat
@@ -330,10 +328,10 @@ filter."
          (format (format "%%%ss  %%s" max-length)
                  (symbol-value (car keybinding))
                  (documentation (cdr keybinding))))
-       keybindings "\n")
+       comb--menu-keybindings "\n")
       "\n\nYou can ")
      (insert-text-button
-      "customize" 'action (lambda (button) (customize-group 'comb)))
+      "customize" 'action (lambda (_) (customize-group 'comb)))
      (insert " these keybindings.\n\nPress q to exit...")))
   nil)
 

@@ -63,7 +63,7 @@
 (defun comb--create-button-widget (tag action)
   "Button widget given TAG and ACTION."
   (widget-create 'push-button :tag tag
-                 :notify (lambda (&rest ignore) (funcall action))))
+                 :notify (lambda (&rest _) (funcall action))))
 
 (defun comb--create-directory-widget ()
   "Directory input widget."

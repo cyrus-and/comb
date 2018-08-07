@@ -47,7 +47,7 @@
 ;; TODO possibly retain the original font lock?
 (defun comb--format-snippet (result info)
   "Generate the report snippet for RESULT and INFO."
-  (let (path begin end text keymap action)
+  (let (path begin end)
     ;; prepare variables
     (setq path (concat (file-name-as-directory (comb--root)) (car result)))
     (setq begin (cadr result))
@@ -57,21 +57,19 @@
       (set-text-properties begin end '(face comb-match))
       (goto-char begin)
       ;; format the result
-      (setq
-       text
-       (concat
-        ;; status flag
-        (comb--format-status (car info)) " "
-        ;; file location
-        (comb--format-file-location path (line-number-at-pos)) "\n"
-        ;; notes
-        (when (cdr info) (concat (comb--format-notes (cdr info)) "\n"))
-        ;; snippet
-        (buffer-substring
-         (max (- begin comb--max-context)
-              (progn (beginning-of-line) (point)))
-         (min (+ end comb--max-context)
-              (progn (goto-char end) (end-of-line) (point)))))))))
+      (concat
+       ;; status flag
+       (comb--format-status (car info)) " "
+       ;; file location
+       (comb--format-file-location path (line-number-at-pos)) "\n"
+       ;; notes
+       (when (cdr info) (concat (comb--format-notes (cdr info)) "\n"))
+       ;; snippet
+       (buffer-substring
+        (max (- begin comb--max-context)
+             (progn (beginning-of-line) (point)))
+        (min (+ end comb--max-context)
+             (progn (goto-char end) (end-of-line) (point))))))))
 
 (defun comb--visit-snippet ()
   "Visit the snippet under the point."
