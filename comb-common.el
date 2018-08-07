@@ -7,7 +7,7 @@
 (require 'cl-macs)
 
 (defface comb-match
-  '((t :inherit isearch))
+  '((t :inherit match))
   "Face used to highlight the matches."
   :group 'comb)
 
