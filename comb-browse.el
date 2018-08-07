@@ -97,19 +97,15 @@
       (message
        (concat
         (if (seq-empty-p (comb--results))
-            (format "No results, configure (%s) the session"
+            (format "Configure (%s) the session"
                     comb-menu-configure-key)
           (concat
            ;; result index and count
            (format "%s/%s"
                    ;; result index, show '?' when filters are not matched
-                   (cond (buffer (if (car progress)
-                                     (1+ (car progress))
-                                   (propertize "?" 'face 'shadow)))
-                         ((< (comb--cursor) 0)
-                          (propertize "BEGIN" 'face 'shadow))
-                         ((>= (comb--cursor) (length (comb--results)))
-                          (propertize "END" 'face 'shadow)))
+                   (cond (buffer (if (car progress) (1+ (car progress)) "?"))
+                         ((< (comb--cursor) 0) "^")
+                         ((>= (comb--cursor) (length (comb--results))) "$"))
                    ;; results matching the filters
                    (cdr progress))
            ;; also show the total number if different
@@ -129,9 +125,9 @@
             (format " matching %s" (propertize filter 'face 'bold))))
         " "
         (propertize "|" 'face 'shadow)
-        (format " help (%s) " comb-menu-help-key)
+        (format " Help (%s) " comb-menu-help-key)
         (propertize "|" 'face 'shadow)
-        (format " quit (%s)" comb-menu-quit-key)
+        (format " Quit (%s)" comb-menu-quit-key)
         ;; result information
         (when buffer
           (concat
