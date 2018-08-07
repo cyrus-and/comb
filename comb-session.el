@@ -7,7 +7,12 @@
 (defvar comb--session-file nil
   "Remember the loaded session so to not ask again on save.")
 
-(cl-defstruct comb--session
+;; XXX using a vector underlying type (instead of records) allows the session
+;; file to be portable because explictly setting the :name option forces the tag
+;; (the first item of the vector) to be always the name of the structure
+;; (instead of some version-dependent name, i.e., prefixed by cl-struct- in
+;; Emacs 25)
+(cl-defstruct (comb--session (:type vector) :named)
   (root default-directory)
   (patterns nil)
   (include-files nil)
