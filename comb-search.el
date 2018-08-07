@@ -11,10 +11,7 @@
 
 In doing so the cursor is reset to the beginning."
   (let (pattern results)
-    ;; obtain the values from the session
-    (setq pattern (comb--merge-regexps (comb--patterns)))
-    (if pattern
-        ;; perform the search handling errors
+    (if (setq pattern (comb--merge-regexps (comb--patterns)))
         (condition-case err
             (progn
               (setq results (comb--find-grep

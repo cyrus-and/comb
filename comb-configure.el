@@ -61,7 +61,7 @@
    :delete-button-args '(:tag "-")
    :append-button-args '(:tag "+")
    `(cons :format "%v"
-          ;; consistency with buttons
+          ;; [] consistency with buttons
           (toggle :format ,(format "%%[%s%%v%s%%]"
                                    widget-push-button-prefix
                                    widget-push-button-suffix)
@@ -81,13 +81,11 @@
 
 (defun comb--configuration-load-ui ()
   "Populate the GUI using the current session."
-  ;; fill the GUI
   (save-mark-and-excursion
     (widget-value-set comb--root-widget (comb--root))
     (widget-value-set comb--patterns-widget (comb--patterns))
     (widget-value-set comb--include-files-widget (comb--include-files))
     (widget-value-set comb--exclude-paths-widget (comb--exclude-paths))
-    ;; update widgets
     (widget-setup)))
 
 (defun comb--configuration-save-ui ()

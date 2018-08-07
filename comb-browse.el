@@ -111,8 +111,8 @@
            ;; also show the total number if different
            (when (/= (cdr progress) (length (comb--results)))
              (format " (%s)" (length (comb--results))))))
-        ;; show the current filter
         " "
+        ;; show the current filter
         (propertize "|" 'face 'shadow)
         " Showing "
         (cl-case (comb--status-filter)
