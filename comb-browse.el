@@ -340,7 +340,8 @@ filter."
   (comb--restore-window-configuration)
   nil)
 
-;; one custom variable is created from `comb--menu-default-keybindings'
+;; one custom variable is created for each element of the
+;; `comb--menu-default-keybindings' alist
 (defconst comb--menu-keybindings
   (mapcar
    (lambda (keybinding)
