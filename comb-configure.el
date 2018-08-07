@@ -92,11 +92,10 @@
 
 (defun comb--configuration-save-ui ()
   "Apply the GUI changes to the current session."
-  (when comb--session
-    (setf (comb--root) (widget-value comb--root-widget))
-    (setf (comb--patterns) (widget-value comb--patterns-widget))
-    (setf (comb--include-files) (widget-value comb--include-files-widget))
-    (setf (comb--exclude-paths) (widget-value comb--exclude-paths-widget))))
+  (setf (comb--root) (widget-value comb--root-widget))
+  (setf (comb--patterns) (widget-value comb--patterns-widget))
+  (setf (comb--include-files) (widget-value comb--include-files-widget))
+  (setf (comb--exclude-paths) (widget-value comb--exclude-paths-widget)))
 
 (defun comb--configuration-search ()
   "Start a new search from the configuration buffer."
