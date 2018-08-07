@@ -11,6 +11,11 @@
 
 (declare-function comb--browse "comb-browse")
 
+(defvar comb--root-widget)
+(defvar comb--patterns-widget)
+(defvar comb--include-files-widget)
+(defvar comb--exclude-paths-widget)
+
 (defun comb--configure ()
   "Show the configuration buffer."
   (comb--with-temp-buffer

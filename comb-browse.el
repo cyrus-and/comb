@@ -13,6 +13,14 @@
 (require 'seq)
 (require 'subr-x)
 
+;; computed later from `comb--menu-default-keybindings'
+(defvar comb--menu-keybindings)
+
+;; keybindings used literally
+(defvar comb-menu-configure-key)
+(defvar comb-menu-help-key)
+(defvar comb-menu-quit-key)
+
 (defconst comb--menu-default-keybindings
   '(("h" . menu-help)
     ("c" . menu-configure)
@@ -310,18 +318,17 @@
 
 ;; one custom variable is created for each element of the
 ;; `comb--menu-default-keybindings' alist
-(defconst comb--menu-keybindings
-  (mapcar
-   (lambda (keybinding)
-     (let (key action name)
-       (setq key (car keybinding))
-       (setq action (intern (format "comb--%s" (cdr keybinding))))
-       (setq name (intern (format "comb-%s-key" (cdr keybinding))))
-       (cons (eval `(defcustom ,name ,key ,(documentation action)
-                      :type 'string :group 'comb))
-             action)))
-   comb--menu-default-keybindings)
-  "Menu keybindings.")
+(setq comb--menu-keybindings
+      (mapcar
+       (lambda (keybinding)
+         (let (key action name)
+           (setq key (car keybinding))
+           (setq action (intern (format "comb--%s" (cdr keybinding))))
+           (setq name (intern (format "comb-%s-key" (cdr keybinding))))
+           (cons (eval `(defcustom ,name ,key ,(documentation action)
+                          :type 'string :group 'comb))
+                 action)))
+       comb--menu-default-keybindings))
 
 (provide 'comb-browse)
 
