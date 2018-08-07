@@ -2,11 +2,14 @@
 
 ;;; Code:
 
+(require 'comb-common)
 (require 'comb-search)
 (require 'comb-session)
 
 (require 'wid-edit)
 (require 'seq)
+
+(declare-function comb--browse "comb-browse")
 
 (defun comb--configure ()
   "Show the configuration buffer."

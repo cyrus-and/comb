@@ -3,7 +3,10 @@
 ;;; Code:
 
 (require 'comb-common)
+(require 'comb-filter)
 (require 'comb-session)
+
+(declare-function comb--browse "comb-browse")
 
 (defconst comb--max-context 100
   "Maximum number chars before and after the match to display in the report.")
