@@ -4,6 +4,8 @@
 
 (require 'comb-session)
 
+(require 'seq)
+
 (defun comb--search ()
   "Perform the lookup according to the session and save the results.
 

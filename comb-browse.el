@@ -7,7 +7,7 @@
 (require 'comb-report)
 (require 'comb-session)
 
-(require 'cl)
+(require 'cl-macs)
 (require 'pulse)
 (require 'seq)
 (require 'subr-x)
@@ -110,7 +110,7 @@
         " "
         (propertize "|" 'face 'shadow)
         " Showing "
-        (case (comb--status-filter)
+        (cl-case (comb--status-filter)
           ('t (propertize "all" 'face 'bold))
           ('nil (propertize "undecided" 'face 'warning))
           ('approved (propertize "approved" 'face 'success))

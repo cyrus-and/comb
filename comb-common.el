@@ -4,6 +4,8 @@
 
 (require 'comb-session)
 
+(require 'cl-macs)
+
 (defface comb-match
   '((t :inherit isearch))
   "Face used to highlight the matches."
@@ -14,7 +16,7 @@
 
 (defun comb--format-status (status)
   "Format result STATUS."
-  (case status
+  (cl-case status
     ('nil (propertize "UNDECIDED" 'face 'warning))
     ('approved (propertize "APPROVED" 'face 'success))
     ('rejected (propertize "REJECTED" 'face 'error))))

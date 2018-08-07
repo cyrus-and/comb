@@ -5,8 +5,8 @@
 (require 'comb-search)
 (require 'comb-session)
 
+(require 'wid-edit)
 (require 'seq)
-(require 'widget)
 
 (defun comb--configure ()
   "Show the configuration buffer."

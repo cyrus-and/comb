@@ -2,14 +2,12 @@
 
 ;;; Code:
 
-(require 'cl)
 (require 'cl-macs)
-(require 'seq)
 
 (defvar comb--session-file nil
   "Remember the loaded session so to not ask again on save.")
 
-(defstruct comb--session
+(cl-defstruct comb--session
   (root default-directory)
   (patterns nil)
   (include-files nil)
