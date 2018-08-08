@@ -103,8 +103,7 @@
   "Start a new search from the configuration buffer."
   (comb--configuration-save-ui)
   (redisplay) ; allow to show the unmodified mark immediately
-  (comb--search)
-  (unless (seq-empty-p (comb--results))
+  (when (comb--search)
     (kill-buffer)
     (comb--browse)))
 
