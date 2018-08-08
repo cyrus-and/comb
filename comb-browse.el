@@ -236,7 +236,7 @@
   "Set the notes filter."
   (comb--with-ignore-quit
    (setf (comb--notes-filter)
-         (read-string "Notes filter: " (comb--notes-filter))))
+         (read-string "Notes filter regexp: " (comb--notes-filter))))
   t)
 
 (defun comb--menu-annotate ()
