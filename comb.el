@@ -28,7 +28,10 @@
   "Start combing!
 
 Start a new interactive session using `default-directory' as the
-search root directory or resume an existing one."
+search root directory or resume an existing one.
+
+All the patterns are Emacs-flavored regexps, see the info
+node `(elisp) Regular Expressions'."
   (interactive)
   (comb--browse))
 
