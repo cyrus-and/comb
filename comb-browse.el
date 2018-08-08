@@ -47,6 +47,9 @@
 
 (defun comb--browse ()
   "Start the interactive mode."
+  ;; creates a session silently the first time
+  (unless comb--session
+    (setq comb--session (make-comb--session)))
   (comb--save-window-configuration)
   (pulse-momentary-unhighlight)
   (comb--start-menu))

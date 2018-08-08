@@ -34,7 +34,7 @@
 (defmacro comb--notes-filter  () '(comb--session-notes-filter  comb--session))
 (defmacro comb--infos         () '(comb--session-infos         comb--session))
 
-(defvar comb--session (make-comb--session)
+(defvar comb--session nil
   "Global session handler.")
 
 (defun comb--session-new ()
