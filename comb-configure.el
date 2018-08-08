@@ -65,7 +65,8 @@
           (toggle :format ,(format "%%[%s%%v%s%%]"
                                    widget-push-button-prefix
                                    widget-push-button-suffix)
-                  :on "✓" :off "✗" :value t)
+                  :on "✓" :off "✗" :value t
+                  :help-echo "Toggle this item")
           (regexp :format " %v" :value ,placeholder))))
 
 (defun comb--create-button-widget (tag action)
