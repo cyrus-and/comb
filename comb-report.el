@@ -18,7 +18,7 @@
   "Show the reuslts in a report format."
   (let (result info point)
     (comb--with-temp-buffer-window
-     "*comb: report*"
+     "*Comb: report*"
      ;; on quit
      (progn (kill-buffer) (comb--browse))
      ;; keymap

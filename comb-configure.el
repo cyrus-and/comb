@@ -19,7 +19,7 @@
 (defun comb--configure ()
   "Show the configuration buffer."
   (comb--with-temp-buffer-window
-   "*comb*"
+   "*Comb*"
    ;; on quit
    (comb--configuration-quit)
    ;; keymap
