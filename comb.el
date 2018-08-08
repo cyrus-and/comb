@@ -1,4 +1,4 @@
-;;; comb.el --- Interactive grep annotation tool -*- lexical-binding: t -*-
+;;; comb.el --- Interactive grep annotation tool for manual static analysis -*- lexical-binding: t -*-
 
 ;; TODO add license and bump version
 
@@ -20,12 +20,15 @@
 (require 'comb-browse)
 
 (defgroup comb nil
-  "Interactive grep annotation tool."
+  "Interactive grep annotation tool for manual static analysis."
   :group 'matching)
 
 ;;;###autoload
 (defun comb ()
-  "Start comb!"
+  "Start combing!
+
+Start a new interactive session using `default-directory' as the
+search root directory or resume an existing one."
   (interactive)
   (comb--browse))
 
