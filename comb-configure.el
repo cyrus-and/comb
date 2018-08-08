@@ -88,18 +88,21 @@
     (widget-value-set comb--patterns-widget (comb--patterns))
     (widget-value-set comb--include-files-widget (comb--include-files))
     (widget-value-set comb--exclude-paths-widget (comb--exclude-paths))
-    (widget-setup)))
+    (widget-setup)
+    (set-buffer-modified-p nil)))
 
 (defun comb--configuration-save-ui ()
   "Apply the GUI changes to the current session."
   (setf (comb--root) (widget-value comb--root-widget))
   (setf (comb--patterns) (widget-value comb--patterns-widget))
   (setf (comb--include-files) (widget-value comb--include-files-widget))
-  (setf (comb--exclude-paths) (widget-value comb--exclude-paths-widget)))
+  (setf (comb--exclude-paths) (widget-value comb--exclude-paths-widget))
+  (set-buffer-modified-p nil))
 
 (defun comb--configuration-search ()
   "Start a new search from the configuration buffer."
   (comb--configuration-save-ui)
+  (redisplay) ; allow to show the unmodified mark immediately
   (comb--search)
   (unless (seq-empty-p (comb--results))
     (kill-buffer)

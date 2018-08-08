@@ -77,7 +77,8 @@ BODY is executed in the context of the newly created buffer."
            (lambda () (interactive) ,on-exit))
          (use-local-map keymap))
        ;; user body
-       (let ((inhibit-read-only t)) ,@body))))
+       (let ((inhibit-read-only t)) ,@body)
+       (set-buffer-modified-p nil))))
 
 (defmacro comb--with-ignore-quit (&rest body)
   "Execute BODY catching the quit error and returning nil in case."
