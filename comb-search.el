@@ -20,7 +20,10 @@ In doing so the cursor is reset to the beginning."
                              (comb--merge-regexps (comb--exclude-paths))))
               ;; replace the results
               (setf (comb--results) results)
-              (setf (comb--cursor) -1))
+              (setf (comb--cursor) -1)
+              (if (seq-empty-p results)
+                  (progn (message "No results") nil)
+                (message "Found %s results" (length results))))
           (quit (message "Search aborted") nil)
           (file-error (message (error-message-string err)) nil))
       (message "No pattern specified") nil)))
@@ -131,9 +134,7 @@ reported to *Messages*."
       (dolist (position occurrences)
         (push (cons path position) output)))
     ;; return the vector of all the results
-    (setq output (nreverse (vconcat output)))
-    (message "Found %s results" (length output))
-    output))
+    (nreverse (vconcat output))))
 
 (provide 'comb-search)
 
