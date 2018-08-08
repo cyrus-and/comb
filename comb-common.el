@@ -29,6 +29,12 @@
 (defvar comb--window-configuration nil
   "Window configuration snapshot.")
 
+(defun comb--wait ()
+  "Wait a bit to allow the user to read the echo message.
+
+User input interrupts the wait."
+  (sit-for 1))
+
 (defun comb--format-status (status)
   "Format result STATUS."
   (cl-case status

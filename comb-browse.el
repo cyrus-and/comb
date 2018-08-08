@@ -67,7 +67,7 @@
               (lambda (elem key)
                 ;; compare the value from custom variable
                 (equal (symbol-value elem) key)))
-             (lambda () (message "Invalid key") (sit-for 0.25) t))))))
+             (lambda () (message "Invalid key") (comb--wait) t))))))
 
 (defun comb--show-dashboard ()
   "Show information about the current result."
@@ -262,19 +262,19 @@
 (defun comb--menu-new ()
   "Create a new session."
   (comb--session-new)
-  (sit-for 1)
+  (comb--wait)
   t)
 
 (defun comb--menu-load ()
   "Load the session from file."
   (comb--session-load)
-  (sit-for 1)
+  (comb--wait)
   t)
 
 (defun comb--menu-save ()
   "Save the session."
   (comb--session-save)
-  (sit-for 1)
+  (comb--wait)
   t)
 
 (defun comb--menu-suspend ()
