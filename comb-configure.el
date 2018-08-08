@@ -18,7 +18,7 @@
 
 (defun comb--configure ()
   "Show the configuration buffer."
-  (comb--with-temp-buffer
+  (comb--with-temp-buffer-window
    "*comb*"
    ;; on quit
    (comb--configuration-quit)

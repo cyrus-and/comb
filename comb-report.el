@@ -17,7 +17,7 @@
 (defun comb--report ()
   "Show the reuslts in a report format."
   (let (result info point)
-    (comb--with-temp-buffer
+    (comb--with-temp-buffer-window
      "*comb: report*"
      ;; on quit
      (progn (kill-buffer) (comb--browse))

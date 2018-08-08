@@ -58,7 +58,7 @@
     (set-window-configuration comb--window-configuration)
     (setq comb--window-configuration nil)))
 
-(defmacro comb--with-temp-buffer (name on-exit keymap &rest body)
+(defmacro comb--with-temp-buffer-window (name on-exit keymap &rest body)
   "Create a disposable buffer named NAME.
 
 The ON-EXIT form is executed when the user presses 'q'.

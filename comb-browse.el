@@ -283,7 +283,7 @@
 
 (defun comb--menu-help ()
   "Show this buffer."
-  (comb--with-temp-buffer
+  (comb--with-temp-buffer-window
    "*comb: help*"
    ;; on quit
    (progn (kill-buffer) (comb--browse))
