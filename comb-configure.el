@@ -104,6 +104,7 @@
   (comb--configuration-save-ui)
   (redisplay) ; allow to show the unmodified mark immediately
   (when (comb--search)
+    (comb--wait)
     (kill-buffer)
     (comb--browse)))
 
