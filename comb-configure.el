@@ -20,8 +20,9 @@
   "Show the configuration buffer."
   (comb--with-temp-buffer
    "*comb*"
-   nil
+   ;; on quit
    (comb--configuration-quit)
+   ;; keymap
    (let ((keymap (make-sparse-keymap)))
      (set-keymap-parent keymap widget-keymap)
      (define-key keymap (kbd "R")

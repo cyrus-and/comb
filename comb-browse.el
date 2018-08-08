@@ -285,9 +285,13 @@
   "Show this buffer."
   (comb--with-temp-buffer
    "*comb: help*"
-   (setq buffer-read-only t)
+   ;; on quit
    (progn (kill-buffer) (comb--browse))
+   ;; keymap
    button-buffer-map
+   ;; setup
+   (setq buffer-read-only t)
+   ;; format the help buffer
    (let (max-length)
      ;; find the key sequence maximum length
      (setq

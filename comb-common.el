@@ -58,12 +58,10 @@
     (set-window-configuration comb--window-configuration)
     (setq comb--window-configuration nil)))
 
-(defmacro comb--with-temp-buffer (name on-prepare on-exit keymap &rest body)
+(defmacro comb--with-temp-buffer (name on-exit keymap &rest body)
   "Create a disposable buffer named NAME.
 
-The form ON-PREPARE is executed after the buffer creation.
-
-The form ON-EXIT is executed when the user presses 'q'.
+The ON-EXIT form is executed when the user presses 'q'.
 
 If KEYMAP is not nil the use it as a parent keymap.
 
@@ -72,7 +70,6 @@ BODY is executed in the context of the newly created buffer."
   `(let ((name ,name))
      (ignore-errors (kill-buffer name))
      (with-current-buffer (switch-to-buffer name)
-       ,on-prepare
        ;; setup keymap
        (let ((keymap (make-sparse-keymap)))
          (set-keymap-parent keymap ,keymap)

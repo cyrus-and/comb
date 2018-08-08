@@ -19,13 +19,17 @@
   (let (result info point)
     (comb--with-temp-buffer
      "*comb: report*"
-     (progn (setq truncate-lines nil) (setq buffer-read-only t))
+     ;; on quit
      (progn (kill-buffer) (comb--browse))
+     ;; keymap
      (let (keymap)
        (setq keymap (make-sparse-keymap))
        (define-key keymap (kbd "RET")
          (lambda () (interactive) (comb--visit-snippet)))
        keymap)
+     ;; setup
+     (setq truncate-lines nil)
+     (setq buffer-read-only t)
      ;; allow to easily navigate the report
      (setq paragraph-start (format "^%s$" comb--snippet-separator))
      (if (zerop (cdr (comb--count-results)))
