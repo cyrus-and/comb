@@ -261,20 +261,23 @@
 
 (defun comb--menu-new ()
   "Create a new session."
-  (comb--session-new)
-  (comb--wait)
+  (comb--with-ignore-quit
+   (comb--session-new)
+   (comb--wait))
   t)
 
 (defun comb--menu-load ()
   "Load the session from file."
-  (comb--session-load)
-  (comb--wait)
+  (comb--with-ignore-quit
+   (comb--session-load)
+   (comb--wait))
   t)
 
 (defun comb--menu-save ()
   "Save the session."
-  (comb--session-save)
-  (comb--wait)
+  (comb--with-ignore-quit
+   (comb--session-save)
+   (comb--wait))
   t)
 
 (defun comb--menu-suspend ()
