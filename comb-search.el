@@ -93,6 +93,10 @@ coordinates."
     ;; load the file in a temporary buffer
     (with-temp-buffer
       (insert-file-contents-literally path)
+      ;; XXX this is faster than `decode-coding-inserted-region' but it may
+      ;; result in a wrong guesswork theoretically (still not reproducible in
+      ;; practice)
+      (decode-coding-region (point-min) (point-max) 'undecided)
       ;; lookup the next pattern until EOF
       (while (re-search-forward pattern nil t)
         (push (cons (match-beginning 0) (match-end 0)) output)))
