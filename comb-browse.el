@@ -294,6 +294,7 @@
    button-buffer-map
    ;; setup
    (setq buffer-read-only t)
+   (visual-line-mode)
    ;; format the help buffer
    (let (max-length)
      ;; find the key sequence maximum length
@@ -307,9 +308,12 @@
      (insert
       (mapconcat
        (lambda (keybinding)
-         (format (format "%%%ss  %%s" max-length)
-                 (symbol-value (car keybinding))
-                 (documentation (cdr keybinding))))
+         (propertize
+          (format (format "%%%ss  %%s" max-length)
+                  (symbol-value (car keybinding))
+                  (documentation (cdr keybinding)))
+          ;; nicely wrap long lines
+          'wrap-prefix (make-string (+ max-length 2) ?\s)))
        comb--menu-keybindings "\n")
       "\n\nYou can ")
      (insert-text-button
