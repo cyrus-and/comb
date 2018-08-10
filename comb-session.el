@@ -53,7 +53,7 @@
         (when (yes-or-no-p "Really discard the current session? ")
           (with-temp-buffer
             (insert-file-contents path)
-            (setq session (read (current-buffer)))
+            (ignore-errors (setq session (read (current-buffer))))
             (if (comb--session-p session)
                 (progn
                   (setq comb--session-file path)
