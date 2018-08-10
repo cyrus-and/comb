@@ -84,17 +84,18 @@
       (setq path (concat (file-name-as-directory (comb--root)) (car result)))
       (setq begin (cadr result))
       (setq end (cddr result))
-      ;; load the buffer containing the result
-      (with-current-buffer
-          ;; visit the file omitting warnings (e.g., same file)
-          (setq buffer (switch-to-buffer (find-file-noselect path t)))
-        ;; set the read-only mode as editing would mess the search results
-        (read-only-mode 1)
-        ;; go to location
-        (goto-char begin)
-        ;; highlight the match and require a key press to dismiss the pulse
-        (let ((pulse-flag nil))
-          (pulse-momentary-highlight-region begin end 'comb-match))))
+      ;; load the buffer containing the result if exists
+      (when (file-readable-p path)
+        (with-current-buffer
+            ;; visit the file omitting warnings (e.g., same file)
+            (setq buffer (switch-to-buffer (find-file-noselect path t)))
+          ;; set the read-only mode as editing would mess the search results
+          (read-only-mode 1)
+          ;; go to location
+          (goto-char begin)
+          ;; highlight the match and require a key press to dismiss the pulse
+          (let ((pulse-flag nil))
+            (pulse-momentary-highlight-region begin end 'comb-match)))))
     ;; print dasboard information without cluttering *Messages*
     (let ((message-log-max nil))
       (message
@@ -106,9 +107,9 @@
            ;; result index and count
            (format "%s/%s"
                    ;; result index, show '?' when filters are not matched
-                   (cond (buffer (if (car progress) (1+ (car progress)) "?"))
-                         ((< (comb--cursor) 0) "^")
-                         ((>= (comb--cursor) (length (comb--results))) "$"))
+                   (cond ((< (comb--cursor) 0) "^")
+                         ((>= (comb--cursor) (length (comb--results))) "$")
+                         (t (if (car progress) (1+ (car progress)) "?")))
                    ;; results matching the filters
                    (cdr progress))
            ;; also show the total number if different
@@ -132,15 +133,18 @@
         (propertize "|" 'face 'shadow)
         (format " Quit (%s)" comb-menu-quit-key)
         ;; result information
-        (when buffer
+        (when (comb--valid-cursor-p)
           (concat
            "\n"
            ;; status flag
            (comb--format-status (car info))
            " "
            ;; result location
-           (comb--format-file-location
-            path (with-current-buffer buffer (line-number-at-pos)))
+           (if buffer
+               (comb--format-file-location
+                path (with-current-buffer buffer (line-number-at-pos)))
+             ;; file not found
+             (propertize path 'face 'error))
            ;; notes
            (when (cdr info)
              (format "\n%s" (comb--format-notes (cdr info)))))))))
