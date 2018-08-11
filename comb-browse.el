@@ -92,8 +92,6 @@
             (setq buffer (switch-to-buffer (find-file-noselect path t)))
           ;; set the read-only mode as editing would mess the search results
           (read-only-mode 1)
-          ;; go to location
-          (goto-char begin)
           ;; highlight the match and require a key press to dismiss the pulse
           (let ((pulse-flag nil))
             (pulse-momentary-highlight-region begin end 'comb-match)))))
@@ -149,13 +147,24 @@
            ;; notes
            (when (cdr info)
              (format "\n%s" (comb--format-notes (cdr info)))))))))
-    ;; recenter after displaying the dashboard
+    ;; recenter the match after displaying the dashboard
     (when buffer
       (with-current-buffer buffer
-        (recenter)
+        ;; go to location
+        (goto-char begin)
+        ;; center horizontally only when long lines are truncated
         (when truncate-lines
           (set-window-hscroll
-           (selected-window) (- (current-column) (/ (window-width) 2))))))))
+           (selected-window) (- (current-column) (/ (window-width) 2))))
+        ;; center vertically the match if it fits the window, otherwise show the
+        ;; most of it starting from the beginning
+        (let (extent)
+          (setq extent (or (ignore-errors (count-screen-lines begin end)) 1))
+          (if (> extent (window-height))
+              (recenter 0)
+            (save-excursion
+              (vertical-motion (/ extent 2))
+              (recenter))))))))
 
 (defun comb--seek (skip)
   "Move the cursor to the next result according to SKIP."
