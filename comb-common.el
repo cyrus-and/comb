@@ -87,8 +87,8 @@ BODY is executed in the context of the newly created buffer."
        (set-buffer-modified-p nil))))
 
 (defmacro comb--with-ignore-quit (&rest body)
-  "Execute BODY catching the quit error and returning nil in case."
-  `(condition-case nil ,@body (quit)))
+  "Execute BODY catching the quit error and returning nil in that case."
+  `(condition-case nil (progn ,@body) (quit)))
 
 (defun comb--valid-cursor-p (&optional cursor)
   "Return non-nil if the cursor (or CURSOR) is valid."
