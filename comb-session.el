@@ -73,7 +73,7 @@
                   (yes-or-no-p "Really overwrite that file? "))
           (with-temp-file path
             (prin1 comb--session (current-buffer))
-            (message "Session saved to %s" path)))
+            (message "Session saved to %s" path) t))
       (message "Cannot access %s" path) nil)))
 
 (provide 'comb-session)
