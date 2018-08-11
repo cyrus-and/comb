@@ -8,15 +8,16 @@
 
 (declare-function comb--browse "comb-browse")
 
+(defface comb-cursor '((t :inherit highlight))
+  "Face used to highlight the entries in the report buffer."
+  :group 'comb)
+
 (defconst comb--max-context 100
   "Maximum number chars before and after the match to display in the report.")
 
-(defconst comb--snippet-separator (propertize "--" 'face 'shadow)
-  "Text used to separate results in the report.")
-
 (defun comb--report ()
   "Show the reuslts in a report format."
-  (let (result info point)
+  (let (result info snippet point)
     (comb--with-temp-buffer-window
      "*Comb: report*"
      ;; on quit
@@ -30,12 +31,13 @@
      ;; setup
      (setq truncate-lines nil)
      (setq buffer-read-only t)
-     ;; allow to easily navigate the report
-     (setq paragraph-start (format "^%s$" comb--snippet-separator))
+     (cursor-sensor-mode)
+     (setq-local overlay (make-overlay 0 0))
+     (overlay-put overlay 'face 'comb-cursor)
+     ;; populate the buffer
      (if (zerop (cdr (comb--count-results)))
          (insert (format "Nothing to show\n"))
        ;; walk the results and apply the filter
-       (insert (format "%s\n" comb--snippet-separator))
        (dotimes (cursor (length (comb--results)))
          (setq result (comb--get-result cursor))
          (when (funcall #'comb--filter result)
@@ -44,10 +46,21 @@
              (setq point (point)))
            ;; prepare the snippet
            (setq info (comb--get-info result))
-           ;; set up user actions and insert the snippet
-           (insert
-            (propertize (comb--format-snippet result info) 'cursor cursor)
-            (format "\n%s\n" comb--snippet-separator))))
+           (setq snippet (comb--format-snippet result info))
+           (let (begin end)
+             (setq begin (point))
+             (setq end (+ begin (length snippet)))
+             ;; set up user actions and insert the snippet
+             (insert
+              (propertize
+               snippet
+               'cursor cursor
+               'cursor-sensor-functions
+               (list (lambda (_ _ event)
+                       ;; move the selection
+                       (if (eq event 'entered)
+                           (move-overlay overlay begin end)
+                         (move-overlay overlay 0 0)))))))))
        ;; finalize
        (goto-char (or point (point-min)))))))
 
@@ -76,7 +89,8 @@
         (max (- begin comb--max-context)
              (progn (beginning-of-line) (point)))
         (min (+ end comb--max-context)
-             (progn (goto-char end) (end-of-line) (point))))))))
+             (progn (goto-char end) (end-of-line) (point))))
+       "\n\n"))))
 
 (defun comb--visit-snippet ()
   "Visit the snippet under the point."
