@@ -197,12 +197,12 @@
   t)
 
 (defun comb--menu-begin ()
-  "Go to the beginning."
+  "Go before the first result."
   (setf (comb--cursor) -1)
   t)
 
 (defun comb--menu-end ()
-  "Go to the end."
+  "Go after the last result."
   (setf (comb--cursor) (length (comb--results)))
   t)
 
@@ -264,17 +264,17 @@
   t)
 
 (defun comb--menu-configure ()
-  "Open the configuration buffer."
+  "Show the configuration buffer."
   (comb--configure)
   nil)
 
 (defun comb--menu-report ()
-  "Open the report buffer."
+  "Show the report buffer."
   (comb--report)
   nil)
 
 (defun comb--menu-new ()
-  "Create a new session."
+  "Create a new session using the current directory as root."
   (comb--with-ignore-quit
    (comb--session-new)
    (comb--wait))
@@ -288,7 +288,7 @@
   t)
 
 (defun comb--menu-save ()
-  "Save the session."
+  "Save the session to file."
   (comb--with-ignore-quit
    (comb--session-save)
    (comb--wait))
@@ -299,7 +299,7 @@
   nil)
 
 (defun comb--menu-help ()
-  "Show this buffer."
+  "Show this help buffer."
   (comb--with-temp-buffer-window
    "*Comb: help*"
    ;; on quit
