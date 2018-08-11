@@ -17,7 +17,7 @@
 
 (defun comb--report ()
   "Show the reuslts in a report format."
-  (let (result info snippet point)
+  (let (overlay result info snippet point)
     (comb--with-temp-buffer-window
      "*Comb: report*"
      ;; on quit
@@ -32,7 +32,7 @@
      (setq truncate-lines nil)
      (setq buffer-read-only t)
      (cursor-sensor-mode)
-     (setq-local overlay (make-overlay 0 0))
+     (setq overlay (make-overlay 0 0))
      (overlay-put overlay 'face 'comb-cursor)
      ;; populate the buffer
      (if (zerop (cdr (comb--count-results)))
@@ -56,7 +56,7 @@
                snippet
                'cursor cursor
                'cursor-sensor-functions
-               (list (lambda (_ _ event)
+               (list (lambda (_window _pos event)
                        ;; move the selection
                        (if (eq event 'entered)
                            (move-overlay overlay begin end)
