@@ -51,7 +51,6 @@
   (unless comb--session
     (setq comb--session (make-comb--session)))
   (comb--save-window-configuration)
-  (pulse-momentary-unhighlight)
   (comb--start-menu))
 
 (defun comb--start-menu ()
@@ -67,7 +66,9 @@
               (lambda (elem key)
                 ;; compare the value from custom variable
                 (equal (symbol-value elem) key)))
-             (lambda () (message "Invalid key") (comb--wait) t))))))
+             (lambda () (message "Invalid key") (comb--wait) t)))))
+  ;; avoid dangling highlights on quit
+  (pulse-momentary-unhighlight))
 
 (defun comb--show-dashboard ()
   "Show information about the current result."
