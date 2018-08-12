@@ -103,18 +103,20 @@ coordinates."
     ;; return the list of all the occurrences
     (nreverse output)))
 
-(defun comb--find-grep (pattern &optional root include-file exclude-path)
+(defun comb--find-grep (pattern root &optional include-file exclude-path)
   "Search PATTERN in all the files in ROOT applying.
 This is basically a composition of `comb--find' and `comb--grep'
 but returns a vector of results in the form (PATH . (BEGIN . END)).
 
-If ROOT is nil then `default-directory' is used.
+If ROOT is not an absolute path then it is considered relative to
+the filesystem root directory.
 
 The failure to open a file for reading is not fatal and is
 reported to *Messages*."
   (let (i file-list file-list-length output occurrences default-directory)
-    ;; root defaults to default-directory
-    (setq default-directory (expand-file-name (or root ".")))
+    ;; root defaults to the file system root directory (note, default-directory
+    ;; is nil here)
+    (setq default-directory (expand-file-name root))
     ;; initialize stats
     (message "Walking the filesystem...")
     (setq i 0)

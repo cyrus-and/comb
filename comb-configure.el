@@ -31,7 +31,7 @@
        (lambda () (interactive) (comb--configuration-search)))
      keymap)
    ;; add root directory
-   (widget-insert "Root directory:\n")
+   (widget-insert "Root directory absolute path:\n")
    (setq comb--root-widget (comb--create-directory-widget))
    (widget-insert "\n")
    ;; add regexp lists
