@@ -51,24 +51,24 @@
   (unless comb--session
     (setq comb--session (make-comb--session)))
   (comb--save-window-configuration)
-  (comb--start-menu))
-
-(defun comb--start-menu ()
-  "Show the interactive menu."
-  (while
-      (progn
-        ;; always show the dashboard after a user choice
-        (comb--show-dashboard)
-        ;; handle user choice
-        (funcall
-         (or (assoc-default
-              (key-description (read-key-sequence nil)) comb--menu-keybindings
-              (lambda (elem key)
-                ;; compare the value from custom variable
-                (equal (symbol-value elem) key)))
-             (lambda () (message "Invalid key") (comb--wait) t)))))
-  ;; avoid dangling highlights on quit
+  (while (comb--menu-choice))
   (pulse-momentary-unhighlight))
+
+(defun comb--menu-choice ()
+  "Prompt the user for the next interactive menu choice."
+  (let (key action)
+    ;; always show the dashboard before a user choice
+    (comb--show-dashboard)
+    ;; read and resolve the next key
+    (setq key (key-description (read-key-sequence nil)))
+    (setq action (assoc-default
+                  key comb--menu-keybindings
+                  ;; compare the value from custom variable
+                  (lambda (elem key) (equal (symbol-value elem) key))))
+    ;; execute the action or handle undefined/special keys
+    (cond ((equal key "C-g") (comb--menu-quit))
+          (action (funcall action))
+          (t (message "Invalid key %s" key) (comb--wait) t))))
 
 (defun comb--show-dashboard ()
   "Show information about the current result."
