@@ -8,8 +8,8 @@
   "Remember the loaded session so to not ask again on save.")
 
 ;; XXX using a vector underlying type (instead of records) allows the session
-;; file to be portable because explictly setting the :name option forces the tag
-;; (the first item of the vector) to be always the name of the structure
+;; file to be portable because explicitly setting the :name option forces the
+;; tag (the first item of the vector) to be always the name of the structure
 ;; (instead of some version-dependent name, i.e., prefixed by cl-struct- in
 ;; Emacs 25)
 (cl-defstruct (comb--session (:type vector) :named)

@@ -16,7 +16,7 @@
   "Maximum number chars before and after the match to display in the report.")
 
 (defun comb--report ()
-  "Show the reuslts in a report format."
+  "Show the results in a report format."
   (let (overlay result info snippet point)
     (comb--with-temp-buffer-window
      "*Comb: report*"

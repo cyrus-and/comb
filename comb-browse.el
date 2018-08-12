@@ -75,7 +75,7 @@
   (let (progress buffer result info path begin end)
     ;; reset highlight if any
     (pulse-momentary-unhighlight)
-    ;; obtain ursor information
+    ;; obtain cursor information
     (setq progress (comb--count-results))
     ;; when a proper result has to be displayed
     (when (comb--valid-cursor-p)
@@ -95,7 +95,7 @@
           ;; highlight the match and require a key press to dismiss the pulse
           (let ((pulse-flag nil))
             (pulse-momentary-highlight-region begin end 'comb-match)))))
-    ;; print dasboard information without cluttering *Messages*
+    ;; print dashboard information without cluttering *Messages*
     (let ((message-log-max nil))
       (message
        (concat
