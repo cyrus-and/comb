@@ -98,8 +98,14 @@ coordinates."
       ;; practice)
       (decode-coding-region (point-min) (point-max) 'undecided)
       ;; lookup the next pattern until EOF
-      (while (re-search-forward pattern nil t)
-        (push (cons (match-beginning 0) (match-end 0)) output)))
+      (condition-case nil
+          (while (re-search-forward pattern nil t)
+            (push (cons (match-beginning 0) (match-end 0)) output)
+            ;; synthetically advance the point for zero-width results, e.g., ^$
+            (when (= (match-beginning 0) (match-end 0))
+              (forward-char)))
+        ;; exit on EOF due to `forward-char'
+        (end-of-buffer)))
     ;; return the list of all the occurrences
     (nreverse output)))
 
