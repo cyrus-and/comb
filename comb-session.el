@@ -70,7 +70,7 @@
     (if (and (file-writable-p path)
              (not (file-directory-p path)))
         (when (or (not (file-exists-p path))
-                  (yes-or-no-p "Really overwrite that file? "))
+                  (yes-or-no-p (format "Really overwrite %s? " path)))
           (with-temp-file path
             (prin1 comb--session (current-buffer))
             (setq comb--session-file path)
