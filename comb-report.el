@@ -98,7 +98,7 @@
     (setq cursor (get-text-property (point) 'cursor))
     (if (null cursor)
         (message "No result under the point")
-      (setf (comb--cursor) (or cursor (comb--cursor)))
+      (setf (comb--cursor) cursor)
       (comb--browse))))
 
 (provide 'comb-report)
