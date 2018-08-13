@@ -79,6 +79,7 @@ BODY is executed in the context of the newly created buffer."
        ;; setup keymap
        (let ((keymap (make-sparse-keymap)))
          (set-keymap-parent keymap ,keymap)
+         (suppress-keymap keymap)
          (define-key keymap (kbd "q")
            (lambda () (interactive) ,on-exit))
          (use-local-map keymap))
