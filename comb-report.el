@@ -67,29 +67,37 @@
 ;; TODO possibly retain the original font lock?
 (defun comb--format-snippet (result info)
   "Generate the report snippet for RESULT and INFO."
-  (let (path begin end)
+  (let (path begin end file-ok)
     ;; prepare variables
     (setq path (concat (file-name-as-directory (comb--root)) (car result)))
     (setq begin (cadr result))
     (setq end (cddr result))
     (with-temp-buffer
-      (insert-file-contents-literally path)
-      (set-text-properties begin end '(face comb-match))
+      ;; attempt to load the file and mark the region (errors if file shrinked
+      ;; or deleted)
+      (ignore-errors
+        (insert-file-contents-literally path)
+        (set-text-properties begin end '(face comb-match))
+        (setq file-ok t))
       (goto-char begin)
       ;; format the result
       (concat
        ;; status flag
        (comb--format-status (car info)) " "
        ;; file location
-       (comb--format-file-location path (line-number-at-pos)) "\n"
+       (if file-ok
+           (comb--format-file-location path (line-number-at-pos))
+         (propertize path 'face 'error))
+       "\n"
        ;; notes
        (when (cdr info) (concat (comb--format-notes (cdr info)) "\n"))
        ;; snippet
-       (buffer-substring
-        (max (- begin comb--max-context)
-             (progn (beginning-of-line) (point)))
-        (min (+ end comb--max-context)
-             (progn (goto-char end) (end-of-line) (point))))
+       (when file-ok
+         (buffer-substring
+          (max (- begin comb--max-context)
+               (progn (beginning-of-line) (point)))
+          (min (+ end comb--max-context)
+               (progn (goto-char end) (end-of-line) (point)))))
        "\n\n"))))
 
 (defun comb--visit-snippet ()
