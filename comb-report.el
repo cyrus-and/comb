@@ -6,7 +6,7 @@
 (require 'comb-filter)
 (require 'comb-session)
 
-(declare-function comb--browse "comb-browse")
+(declare-function comb--display "comb-browse")
 
 (defface comb-cursor '((t :inherit highlight))
   "Face used to highlight the entries in the report buffer."
@@ -21,7 +21,7 @@
     (comb--with-temp-buffer-window
      "*Comb: report*"
      ;; on quit
-     (progn (kill-buffer) (comb--browse))
+     (kill-buffer)
      ;; keymap
      (let (keymap)
        (setq keymap (make-sparse-keymap))
@@ -107,7 +107,7 @@
     (if (null cursor)
         (message "No result under the point")
       (setf (comb--cursor) cursor)
-      (comb--browse))))
+      (comb--display))))
 
 (provide 'comb-report)
 

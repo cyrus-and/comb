@@ -36,12 +36,12 @@
 ;;; Code:
 
 (require 'comb-browse)
+(require 'comb-common)
 
 (defgroup comb nil
   "Interactive grep annotation tool for manual static analysis."
   :group 'matching)
 
-;;;###autoload
 (defun comb ()
   "Start combing!
 
@@ -51,7 +51,8 @@ search root directory or resume an existing one.
 All the patterns are Emacs-flavored regexps, see the info
 node `(elisp) Regular Expressions'."
   (interactive)
-  (comb--browse))
+  (comb--save-window-configuration)
+  (comb--display))
 
 (provide 'comb)
 

@@ -46,12 +46,12 @@ User input interrupts the wait."
   "Format result NOTES."
   (propertize notes 'face 'comb-notes))
 
-(defun comb--format-file-location (path line)
+(defun comb--format-file-location (path &optional line)
   "Format file location (PATH and LINE)."
-  (format "%s%s:%s"
-          (file-name-directory path)
+  (format "%s%s%s"
+          (or (file-name-directory path) "")
           (propertize (file-name-nondirectory path) 'face 'bold)
-          (propertize (number-to-string line) 'face 'shadow)))
+          (if line (propertize (format ":%s" line) 'face 'shadow) "")))
 
 (defun comb--save-window-configuration ()
   "Save current window configuration if needed."

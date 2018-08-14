@@ -9,7 +9,7 @@
 (require 'wid-edit)
 (require 'seq)
 
-(declare-function comb--browse "comb-browse")
+(declare-function comb--display "comb-browse")
 
 (defvar comb--root-widget)
 (defvar comb--patterns-widget)
@@ -19,7 +19,7 @@
 (defun comb--configure ()
   "Show the configuration buffer."
   (comb--with-temp-buffer-window
-   "*Comb*"
+   "*Comb: configure*"
    ;; on quit
    (comb--configuration-quit)
    ;; keymap
@@ -103,16 +103,15 @@
   "Start a new search from the configuration buffer."
   (comb--configuration-save-ui)
   (redisplay) ; allow to show the unmodified mark immediately
-  (when (comb--search)
-    (comb--wait)
-    (kill-buffer)
-    (comb--browse)))
+  (if (comb--search)
+      (progn (kill-buffer) (comb--display))
+    ;; just update it in the background
+    (comb--display t)))
 
 (defun comb--configuration-quit ()
   "Quit the configuration buffer committing changes to the session."
   (comb--configuration-save-ui)
-  (kill-buffer)
-  (comb--browse))
+  (kill-buffer))
 
 (provide 'comb-configure)
 
