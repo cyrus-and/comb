@@ -52,6 +52,9 @@ All the patterns are Emacs-flavored regexps, see the info
 node `(elisp) Regular Expressions'."
   (interactive)
   (comb--save-window-configuration)
+  ;; creates a session silently the first time
+  (unless comb--session
+    (setq comb--session (make-comb--session)))
   (comb--display))
 
 (provide 'comb)

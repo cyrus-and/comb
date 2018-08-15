@@ -47,15 +47,14 @@
       (define-key keymap (car keybinding) (cdr keybinding))))
   "Comb keymap.")
 
-;; TODO this needs proper refactoring...
+(defvar comb--displayed-buffer nil
+  "Visited buffer containing the current result.")
+
 (defun comb--display (&optional no-switch)
   "Prepare the Comb buffer for the current result.
 
 And switch to it unless NO-SWITCH."
-  (let (progress buffer result info relative-path path begin end)
-    ;; creates a session silently the first time
-    (unless comb--session
-      (setq comb--session (make-comb--session)))
+  (let (result relative-path path begin end)
     ;; set up the comb buffer
     (with-current-buffer (get-buffer-create comb--buffer-name)
       (fundamental-mode)
@@ -63,122 +62,138 @@ And switch to it unless NO-SWITCH."
       (use-local-map comb-keymap)
       (read-only-mode 1)
       (let ((inhibit-read-only t))
-        (erase-buffer))
+        (erase-buffer)
+        (set-buffer-modified-p nil))
       (remove-overlays)
-      ;; obtain cursor information
-      (setq progress (comb--count-results))
       ;; when a proper result has to be displayed
-      (when (comb--valid-cursor-p)
+      (if (not (comb--valid-cursor-p))
+          (setq comb--displayed-buffer nil)
         ;; prepare variables
         (setq result (comb--get-result))
-        (setq info (comb--get-info result))
         (setq relative-path (car result))
         (setq path (concat (file-name-as-directory (comb--root)) relative-path))
         (setq begin (cadr result))
         (setq end (cddr result))
         ;; TODO only if different? otherwise just goto result
-        (when (file-readable-p path)
+        (if (not (file-readable-p path))
+            (setq comb--displayed-buffer nil)
           ;; visit the file omitting warnings (e.g., same file)
-          (setq buffer (find-file-noselect path t))
+          (setq comb--displayed-buffer (find-file-noselect path t))
           ;; replace the content of the buffer
           (let ((inhibit-read-only t))
-            (insert-buffer-substring buffer)
+            (insert-buffer-substring comb--displayed-buffer)
             (set-buffer-modified-p nil))
           ;; copy the major mode from the visited buffer and reset the keymap
-          (funcall (with-current-buffer buffer major-mode))
+          (funcall (with-current-buffer comb--displayed-buffer major-mode))
           (use-local-map comb-keymap)
           ;; highlight the match permanently
           (overlay-put (make-overlay begin end) 'face 'comb-match)))
-      ;; build the info line
-      (setq
-       header-line-format
-       (list
-        " "
-        ;; show the current filter
-        (comb--header-line-button
-         'comb-cycle-status-filter
-         (cl-case (comb--status-filter)
-           ('t (propertize "All" 'face 'bold))
-           ('nil (propertize "Undecided" 'face 'comb-undecided))
-           ('approved (propertize "Approved" 'face 'comb-approved))
-           ('rejected (propertize "Rejected" 'face 'comb-rejected))))
-        (let ((filter (comb--notes-filter)))
-          (unless (string-empty-p filter)
-            (format " ~ %s"
-                    (comb--header-line-button
-                     'comb-set-notes-filter
-                     (propertize filter 'face 'bold)))))
-        " " (propertize "|" 'face 'shadow) " "
-        ;; show result number and count
-        (if (seq-empty-p (comb--results))
-            (format "Configure (%s) or load (%s) a session %s Show help (%s)"
-                    (comb--header-line-button 'comb-configure)
-                    (comb--header-line-button 'comb-load)
-                    (propertize "|" 'face 'shadow)
-                    (comb--header-line-button 'comb-help))
-          (concat
-           (format "%s/%s"
-                   ;; result index, show '?' when filters are not matched
-                   (cond ((< (comb--cursor) 0) "^")
-                         ((>= (comb--cursor) (length (comb--results))) "$")
-                         (t (if (car progress) (1+ (car progress)) "?")))
-                   ;; results matching the filters
-                   (cdr progress))
-           ;; also show the total number if different
-           (when (/= (cdr progress) (length (comb--results)))
-             (format " (%s)" (length (comb--results))))))
-        ;; show result information
-        (if (comb--valid-cursor-p)
-            (concat
-             " " (propertize "|" 'face 'shadow) " "
-             ;; status flag
-             (comb--format-status (car info))
-             " "
-             ;; result location
-             (if buffer
-                 (comb--header-line-button
-                  'comb-visit (comb--format-file-location relative-path))
-               ;; file not found
-               (propertize relative-path 'face 'error))
-             ;; notes
-             (when (cdr info)
-               (format " %s %s"
-                       (propertize "|" 'face 'shadow)
-                       (comb--header-line-button
-                        'comb-annotate (comb--format-notes (cdr info))))))
-          ;; show navigation help
-          (unless (seq-empty-p (comb--results))
-            (format " %s %s %s Show help (%s)"
-                    (propertize "|" 'face 'shadow)
-                    (if (< (comb--cursor) 0)
-                        (format "Move to the next (%s)"
-                         (comb--header-line-button 'comb-next))
-                      (format "Move to the previous (%s)"
-                       (comb--header-line-button 'comb-prev)))
-                    (propertize "|" 'face 'shadow)
-                    (comb--header-line-button 'comb-help))))))
-      ;; redisplay the info line
-      (force-mode-line-update)
+      ;; place information in the header line
+      (comb--set-header result)
       ;; switch to the comb buffer if requested (no-switch is only used to
-      ;; invalidate the buffer when there are no results after a search)
+      ;; invalidate the buffer when there are no results after a search so there
+      ;; is no need to recenter)
       (unless no-switch
         (switch-to-buffer (current-buffer))
-        (when (and (comb--valid-cursor-p) (file-readable-p path))
-          ;; go to location
-          (goto-char begin)
-          ;; center horizontally only when long lines are truncated
-          (when truncate-lines
-            (set-window-hscroll
-             (selected-window) (- (current-column) (/ (window-width) 2))))
-          ;; center vertically the match if it fits the window, otherwise show
-          ;; the most of it starting from the beginning
-          (let (extent)
-            (setq extent (or (ignore-errors (count-screen-lines begin end)) 1))
-            (if (> extent (window-height))
-                (recenter 0)
-              (save-excursion
-                (vertical-motion (/ extent 2))
-                (recenter)))))))))
+        ;; center the result in the current window
+        (when comb--displayed-buffer
+          (comb--center-region begin end))))))
+
+(defun comb--set-header (result)
+  "Set the header for the current buffer using RESULT."
+  (let (progress info)
+    ;; obtain information
+    (setq progress (comb--count-results))
+    (when result
+      (setq info (comb--get-info result)))
+    ;; build the info line
+    (setq
+     header-line-format
+     (list
+      " "
+      ;; show the current filter
+      (comb--header-line-button
+       'comb-cycle-status-filter
+       (cl-case (comb--status-filter)
+         ('t (propertize "All" 'face 'bold))
+         ('nil (propertize "Undecided" 'face 'comb-undecided))
+         ('approved (propertize "Approved" 'face 'comb-approved))
+         ('rejected (propertize "Rejected" 'face 'comb-rejected))))
+      (let ((filter (comb--notes-filter)))
+        (unless (string-empty-p filter)
+          (format " ~ %s"
+                  (comb--header-line-button
+                   'comb-set-notes-filter
+                   (propertize filter 'face 'bold)))))
+      " " (propertize "|" 'face 'shadow) " "
+      ;; show result number and count
+      (if (seq-empty-p (comb--results))
+          (format "Configure (%s) or load (%s) a session %s Show help (%s)"
+                  (comb--header-line-button 'comb-configure)
+                  (comb--header-line-button 'comb-load)
+                  (propertize "|" 'face 'shadow)
+                  (comb--header-line-button 'comb-help))
+        (concat
+         (format "%s/%s"
+                 ;; result index, show '?' when filters are not matched
+                 (cond ((< (comb--cursor) 0) "^")
+                       ((>= (comb--cursor) (length (comb--results))) "$")
+                       (t (if (car progress) (1+ (car progress)) "?")))
+                 ;; results matching the filters
+                 (cdr progress))
+         ;; also show the total number if different
+         (when (/= (cdr progress) (length (comb--results)))
+           (format " (%s)" (length (comb--results))))))
+      ;; show result information
+      (if (comb--valid-cursor-p)
+          (concat
+           " " (propertize "|" 'face 'shadow) " "
+           ;; status flag
+           (comb--format-status (car info))
+           " "
+           ;; result location
+           (if comb--displayed-buffer
+               (comb--header-line-button
+                'comb-visit (comb--format-file-location (car result)))
+             ;; file not found
+             (propertize (car result) 'face 'error))
+           ;; notes
+           (when (cdr info)
+             (format " %s %s"
+                     (propertize "|" 'face 'shadow)
+                     (comb--header-line-button
+                      'comb-annotate (comb--format-notes (cdr info))))))
+        ;; show navigation help
+        (unless (seq-empty-p (comb--results))
+          (format " %s %s %s Show help (%s)"
+                  (propertize "|" 'face 'shadow)
+                  (if (< (comb--cursor) 0)
+                      (format "Move to the next (%s)"
+                              (comb--header-line-button 'comb-next))
+                    (format "Move to the previous (%s)"
+                            (comb--header-line-button 'comb-prev)))
+                  (propertize "|" 'face 'shadow)
+                  (comb--header-line-button 'comb-help))))))
+    ;; redisplay the info line
+    (force-mode-line-update)))
+
+(defun comb--center-region (begin end)
+  "Scroll the current window to center the region from BEGIN to END."
+  ;; go to location
+  (goto-char begin)
+  ;; center horizontally only when long lines are truncated
+  (when truncate-lines
+    (set-window-hscroll
+     (selected-window) (- (current-column) (/ (window-width) 2))))
+  ;; center vertically the match if it fits the window, otherwise show
+  ;; the most of it starting from the beginning
+  (let (extent)
+    (setq extent (or (ignore-errors (count-screen-lines begin end)) 1))
+    (if (> extent (window-height))
+        (recenter 0)
+      (save-excursion
+        (vertical-motion (/ extent 2))
+        (recenter)))))
 
 (defun comb-prev ()
   "Show the previous result."
