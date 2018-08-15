@@ -59,6 +59,7 @@ And switch to it unless NO-SWITCH."
     ;; set up the comb buffer
     (with-current-buffer (get-buffer-create comb--buffer-name)
       (fundamental-mode)
+      (suppress-keymap comb-keymap) ; just once is enough
       (use-local-map comb-keymap)
       (read-only-mode 1)
       (let ((inhibit-read-only t))
