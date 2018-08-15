@@ -29,12 +29,6 @@
 (defvar comb--window-configuration nil
   "Window configuration snapshot.")
 
-(defun comb--wait ()
-  "Wait a bit to allow the user to read the echo message.
-
-User input interrupts the wait."
-  (sit-for 1))
-
 (defun comb--format-status (status)
   "Format result STATUS."
   (cl-case status
@@ -86,10 +80,6 @@ BODY is executed in the context of the newly created buffer."
        ;; user body
        (let ((inhibit-read-only t)) ,@body)
        (set-buffer-modified-p nil))))
-
-(defmacro comb--with-ignore-quit (&rest body)
-  "Execute BODY catching the quit error and returning nil in that case."
-  `(condition-case nil (progn ,@body) (quit)))
 
 (defun comb--valid-cursor-p (&optional cursor)
   "Return non-nil if the cursor (or CURSOR) is valid."
