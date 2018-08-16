@@ -55,39 +55,36 @@
 
 And switch to it unless NO-SWITCH."
   (let (result relative-path path begin end)
-    ;; set up the comb buffer
-    (with-current-buffer (get-buffer-create comb--buffer-name)
-      (fundamental-mode)
-      (suppress-keymap comb-keymap) ; just once is enough
+    ;; when a proper result has to be displayed
+    (if (not (comb--valid-cursor-p))
+        (setq comb--displayed-buffer nil)
+      ;; prepare variables
+      (setq result (comb--get-result))
+      (setq relative-path (car result))
+      (setq path (concat (file-name-as-directory (comb--root)) relative-path))
+      (setq begin (cadr result))
+      (setq end (cddr result))
+      ;; check if readable file and visit it
+      (if (not (file-readable-p path))
+          (setq comb--displayed-buffer nil)
+        ;; visit the file omitting warnings (e.g., same file)
+        (setq comb--displayed-buffer (find-file-noselect path t))))
+    ;; XXX kill the comb buffer anyway, the creation of an indirect buffer
+    ;; should be cheap so it may not be worth it to reuse it when the file does
+    ;; not change
+    (ignore-errors (kill-buffer comb--buffer-name))
+    (with-current-buffer
+        ;; create an empty buffer or make an indirect copy cloning the state
+        (if comb--displayed-buffer
+            (make-indirect-buffer comb--displayed-buffer comb--buffer-name t)
+          (get-buffer-create comb--buffer-name))
+      ;; setup the newly created buffer
+      (suppress-keymap comb-keymap)
       (use-local-map comb-keymap)
       (read-only-mode 1)
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (set-buffer-modified-p nil))
-      (remove-overlays)
-      ;; when a proper result has to be displayed
-      (if (not (comb--valid-cursor-p))
-          (setq comb--displayed-buffer nil)
-        ;; prepare variables
-        (setq result (comb--get-result))
-        (setq relative-path (car result))
-        (setq path (concat (file-name-as-directory (comb--root)) relative-path))
-        (setq begin (cadr result))
-        (setq end (cddr result))
-        ;; TODO only if different? otherwise just goto result
-        (if (not (file-readable-p path))
-            (setq comb--displayed-buffer nil)
-          ;; visit the file omitting warnings (e.g., same file)
-          (setq comb--displayed-buffer (find-file-noselect path t))
-          ;; replace the content of the buffer
-          (let ((inhibit-read-only t))
-            (insert-buffer-substring comb--displayed-buffer)
-            (set-buffer-modified-p nil))
-          ;; copy the major mode from the visited buffer and reset the keymap
-          (funcall (with-current-buffer comb--displayed-buffer major-mode))
-          (use-local-map comb-keymap)
-          ;; highlight the match permanently
-          (overlay-put (make-overlay begin end) 'face 'comb-match)))
+      ;; highlight the match
+      (when comb--displayed-buffer
+        (overlay-put (make-overlay begin end) 'face 'comb-match))
       ;; place information in the header line
       (comb--set-header result)
       ;; switch to the comb buffer if requested (no-switch is only used to
