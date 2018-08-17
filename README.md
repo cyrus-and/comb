@@ -5,7 +5,7 @@ of regular expressions in files. The interactive interface allows to perform an
 exhaustive classification of all the results to rule out false positives and
 asses proper matches during manual static analysis.
 
-![Browse](https://i.imgur.com/oTdukkl.png)
+![Browse](https://i.imgur.com/tFOsCcW.png)
 
 ## Installation
 
@@ -30,7 +30,7 @@ search:
 
 4. fill the desired fields and finally perform a search.
 
-![Configuration](https://i.imgur.com/HqSGuHl.png)
+![Configuration](https://i.imgur.com/lys6L1u.png)
 
 If there are some results to browse then the interactive menu is displayed, from
 here it is possible to annotate the results (`!`) and change their status to
@@ -43,7 +43,7 @@ and the notes filter regexp (set with `F`) are displayed. In addition to that,
 `t` spawns a buffer containing a list of the currently displayed results, this
 allows to Isearch the snippets and jump to the result at point.
 
-![Report](https://i.imgur.com/3eDLpjj.png)
+![Report](https://i.imgur.com/Ixskhr5.png)
 
 Finally it is possible to save the current session to file (`s`) and load it
 back to resume the analysis (`l`).
