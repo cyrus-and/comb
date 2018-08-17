@@ -296,8 +296,9 @@ And switch to it unless NO-SWITCH."
 (defun comb-configure ()
   "Show the configuration buffer."
   (interactive)
-  (when comb--session
-    (comb--configure)))
+  (unless comb--session
+    (comb--session-new))
+  (comb--configure))
 
 (defun comb-report ()
   "Show the report buffer."
