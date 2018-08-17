@@ -31,17 +31,17 @@
        (lambda () (interactive) (comb--configuration-search)))
      keymap)
    ;; add root directory
-   (widget-insert "Root directory absolute path:\n")
+   (widget-insert "In directory (absolute path):\n\n")
    (setq comb--root-widget (comb--create-directory-widget))
    (widget-insert "\n")
    ;; add regexp lists
-   (widget-insert "Search for:\n")
+   (widget-insert "Search for:\n\n")
    (setq comb--patterns-widget (comb--create-list-widget "\\<word\\>"))
    (widget-insert "\n")
-   (widget-insert "Including file names matching:\n")
+   (widget-insert "Including file names matching:\n\n")
    (setq comb--include-files-widget (comb--create-list-widget "\\.extension$"))
    (widget-insert "\n")
-   (widget-insert "Excluding directory names matching:\n")
+   (widget-insert "Excluding directory names matching:\n\n")
    (setq comb--exclude-paths-widget (comb--create-list-widget "^some/directory$"))
    (widget-insert "\n")
    ;; add search and reset buttons
