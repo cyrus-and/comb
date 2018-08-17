@@ -39,7 +39,8 @@
 
 (defun comb--session-new ()
   "Initialize a new empty session."
-  (if (yes-or-no-p "Really discard the current session? ")
+  (if (or (null comb--session)
+          (yes-or-no-p "Really discard the current session? "))
       (progn
         (setq comb--session-file nil)
         (setq comb--session (make-comb--session))
