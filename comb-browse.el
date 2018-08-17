@@ -309,14 +309,14 @@ And switch to it unless NO-SWITCH."
 (defun comb-new ()
   "Create a new session using the current directory as root."
   (interactive)
-  (comb--session-new)
-  (comb--display))
+  (when (comb--session-new)
+    (comb--display)))
 
 (defun comb-load ()
   "Load the session from file."
   (interactive)
-  (comb--session-load)
-  (comb--display))
+  (when (comb--session-load)
+    (comb--display)))
 
 (defun comb-save ()
   "Save the session to file."

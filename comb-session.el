@@ -53,7 +53,8 @@
     (setq path (read-file-name "Session file: "))
     (if (and (file-readable-p path)
              (not (file-directory-p path)))
-        (if (yes-or-no-p "Really discard the current session? ")
+        (if (or (null comb--session)
+                (yes-or-no-p "Really discard the current session? "))
             (with-temp-buffer
               (insert-file-contents path)
               (ignore-errors (setq session (read (current-buffer))))
