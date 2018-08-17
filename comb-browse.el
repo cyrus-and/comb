@@ -322,8 +322,7 @@ And switch to it unless NO-SWITCH."
   "Save the session to file."
   (interactive)
   (when comb--session
-    (comb--session-save)
-    (comb--display)))
+    (comb--session-save)))
 
 (defun comb-visit ()
   "Visit the buffer containing the current result."
