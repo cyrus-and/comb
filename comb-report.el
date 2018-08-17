@@ -67,8 +67,9 @@
 ;; TODO possibly retain the original font lock?
 (defun comb--format-snippet (result info)
   "Generate the report snippet for RESULT and INFO."
-  (let (path begin end file-ok)
+  (let (relative-path path begin end file-ok)
     ;; prepare variables
+    (setq relative-path (car result))
     (setq path (concat (file-name-as-directory (comb--root)) (car result)))
     (setq begin (cadr result))
     (setq end (cddr result))
@@ -86,8 +87,8 @@
        (comb--format-status (car info)) " "
        ;; file location
        (if file-ok
-           (comb--format-file-location path (line-number-at-pos))
-         (propertize path 'face 'error))
+           (comb--format-file-location relative-path (line-number-at-pos))
+         (propertize relative-path 'face 'error))
        "\n"
        ;; notes
        (when (cdr info) (concat (comb--format-notes (cdr info)) "\n"))
