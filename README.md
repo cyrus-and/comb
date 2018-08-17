@@ -32,16 +32,17 @@ search:
 
 ![Configuration](https://i.imgur.com/lys6L1u.png)
 
-If there are some results to browse then the interactive menu is displayed, from
+If there are some results to browse then the `*Comb*` buffer is displayed, from
 here it is possible to annotate the results (`!`) and change their status to
 approved (`a`/`A`), rejected (`r`/`R`) or undecided (`u`/`U`, the default).
 
 The above actions work on the current result which can be moved to the next
-(`n`) or the previous (`p`), in doing so the current buffer is updated and the
-result is highlighted. Only results matching the status filter (cycled with `f`)
-and the notes filter regexp (set with `F`) are displayed. In addition to that,
-`t` spawns a buffer containing a list of the currently displayed results, this
-allows to Isearch the snippets and jump to the result at point.
+(`n`) or the previous (`p`), in doing so the `*Comb*` buffer is updated to show
+the file that contains the result, which is now highlighted. Only results
+matching the status filter (cycled with `f`) and the notes filter regexp (set
+with `F`) are displayed. In addition to that, `t` spawns a buffer containing the
+list of the currently displayed results, this allows to Isearch the snippets and
+jump to the result at point.
 
 ![Report](https://i.imgur.com/Ixskhr5.png)
 
