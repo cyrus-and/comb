@@ -45,7 +45,7 @@
         (setq comb--session-file nil)
         (setq comb--session (make-comb--session))
         (message "Session created with root %s" (comb--root)) t)
-    (message "Session not created")))
+    (message "Session not created") nil))
 
 (defun comb--session-load ()
   "Load a session from file."
@@ -63,7 +63,7 @@
                     (setq comb--session session)
                     (message "Session loaded from %s" path) t)
                 (message "Invalid session file %s" path) nil))
-          (message "Session not loaded"))
+          (message "Session not loaded") nil)
       (message "Cannot access %s" path) nil)))
 
 (defun comb--session-save ()
@@ -79,7 +79,7 @@
               (prin1 comb--session (current-buffer))
               (setq comb--session-file path)
               (message "Session saved to %s" path) t)
-          (message "Session not saved"))
+          (message "Session not saved") nil)
       (message "Cannot access %s" path) nil)))
 
 (provide 'comb-session)
