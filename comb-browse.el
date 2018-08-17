@@ -16,7 +16,7 @@
 (defconst comb--buffer-name "*Comb*"
   "Comb main buffer name.")
 
-(defconst comb--default-keybindings
+(defconst comb-default-keybindings
   '(("h" . comb-help)
     ("c" . comb-configure)
     ("p" . comb-prev)
@@ -43,7 +43,7 @@
 (defconst comb-keymap
   ;; build a keymap from the default keybindings
   (let ((keymap (make-sparse-keymap)))
-    (dolist (keybinding comb--default-keybindings keymap)
+    (dolist (keybinding comb-default-keybindings keymap)
       (define-key keymap (car keybinding) (cdr keybinding))))
   "Comb keymap.")
 
@@ -356,7 +356,7 @@ And switch to it unless NO-SWITCH."
       (apply #'max (mapcar
                     (lambda (keybinding)
                       (length (comb--keybinding-for (cdr keybinding))))
-                    comb--default-keybindings)))
+                    comb-default-keybindings)))
      ;; format the help buffer
      (insert
       (mapconcat
@@ -367,7 +367,7 @@ And switch to it unless NO-SWITCH."
                   (documentation (cdr keybinding)))
           ;; nicely wrap long lines
           'wrap-prefix (make-string (+ max-length 2) ?\s)))
-       comb--default-keybindings "\n"))
+       comb-default-keybindings "\n"))
      (insert "\n\nPress q to exit..."))))
 
 (defun comb-quit ()

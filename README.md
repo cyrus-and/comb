@@ -50,3 +50,33 @@ Finally it is possible to save the current session to file (`s`) and load it
 back to resume the analysis (`l`).
 
 See the help (`h`) for a list of all the features and keybindings.
+
+## Configuration
+
+Some faces can be configured, take a look at the `comb` configuration group
+(`M-x configure-group RET comb`).
+
+Additionally, all the keybindings in the `*Comb*` buffer can be altered by
+changing the `comb-keymap` keymap. For example, to use the arrows to navigate
+the results use:
+
+```elisp
+(define-key comb-keymap (kbd "<left>") 'comb-prev)
+(define-key comb-keymap (kbd "<right>") 'comb-next)
+```
+
+This does not unbind the original keybindings though. It may be convenient to
+completely replace the keymap instead so to avoid collisions with existing
+modes:
+
+```elisp
+(setq comb-keymap (make-sparse-keymap))
+(define-key comb-keymap (kbd "x") 'comb-quit)
+(define-key comb-keymap (kbd "?") 'comb-help)
+(define-key comb-keymap (kbd "<left>") 'comb-prev)
+(define-key comb-keymap (kbd "<right>") 'comb-next)
+;; ...
+```
+
+See the `comb-default-keybindings` alist to obtain the functions used by the
+default keybindings.
