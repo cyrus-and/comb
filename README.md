@@ -9,13 +9,26 @@ asses proper matches during manual static analysis.
 
 ## Installation
 
-From [MELPA]:
+### [MELPA] package
 
 ```
 M-x package-install RET comb
 ```
 
 [MELPA]: https://melpa.org/#/getting-started
+
+### Local package
+
+```
+M-x package-install-file RET /path/to/comb/
+```
+
+### Manual
+
+```elisp
+(add-to-list 'load-path "/path/to/comb/")
+(require 'comb)
+```
 
 ## Usage
 
