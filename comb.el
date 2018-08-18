@@ -42,6 +42,7 @@
   "Interactive grep annotation tool for manual static analysis."
   :group 'matching)
 
+;;;###autoload
 (defun comb ()
   "Start combing!
 

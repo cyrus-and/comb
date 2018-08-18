@@ -312,6 +312,7 @@ And switch to it unless NO-SWITCH."
   (when (comb--session-new)
     (comb--display)))
 
+;;;###autoload
 (defun comb-load ()
   "Load the session from file."
   (interactive)
