@@ -1,8 +1,13 @@
+SHELL := /bin/bash
+
+.ONESHELL:
 .PHONY: check clean
 
-check:
-	@for i in *.el; do emacs --batch -Q -L . -f batch-byte-compile "$$i"; done
-	@emacs --batch -Q -L . --eval '(check-declare-directory ".")'
+check: clean
+	@emacs -Q -L . --batch --eval '
+	(dolist (file (directory-files "." nil "\\.el$$"))
+	  (check-declare-file file)
+	  (byte-compile-file file))'
 
 clean:
-	rm -f *.elc
+	@rm -f *.elc
