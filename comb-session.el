@@ -13,7 +13,7 @@
 ;; (instead of some version-dependent name, i.e., prefixed by cl-struct- in
 ;; Emacs 25)
 (cl-defstruct (comb--session (:type vector) :named)
-  (root default-directory)
+  (root (abbreviate-file-name default-directory))
   (patterns nil)
   (include-files nil)
   (exclude-paths nil)
