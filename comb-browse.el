@@ -50,10 +50,8 @@
 (defvar comb--displayed-buffer nil
   "Visited buffer containing the current result.")
 
-(defun comb--display (&optional no-switch)
-  "Prepare the Comb buffer for the current result.
-
-And switch to it unless NO-SWITCH."
+(defun comb--display ()
+  "Display the current result in the Comb buffer."
   (let (result relative-path path begin end)
     ;; when a proper result has to be displayed
     (if (not (comb--valid-cursor-p))
@@ -87,14 +85,15 @@ And switch to it unless NO-SWITCH."
         (overlay-put (make-overlay begin end) 'face 'comb-match))
       ;; place information in the header line
       (comb--set-header result)
-      ;; switch to the comb buffer if requested (no-switch is only used to
-      ;; invalidate the buffer when there are no results after a search so there
-      ;; is no need to recenter)
-      (unless no-switch
-        (switch-to-buffer (current-buffer))
-        ;; center the result in the current window
-        (when comb--displayed-buffer
-          (comb--center-region begin end))))))
+      ;; switch to the comb buffer if requested
+      (switch-to-buffer (current-buffer))
+      ;; center the result in the current window
+      (when comb--displayed-buffer
+        (comb--center-region begin end)))))
+
+(defun comb--kill ()
+  "Kill the Comb buffer."
+  (ignore-errors (kill-buffer comb--buffer-name)))
 
 (defun comb--set-header (result)
   "Set the header for the current buffer using RESULT."
