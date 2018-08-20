@@ -44,7 +44,7 @@
    (widget-insert "\n")
    (widget-insert "Excluding directory names matching:\n\n")
    (setq comb--exclude-paths-widget (comb--create-list-widget "^some/directory$"))
-   (widget-insert "\n")
+   (widget-insert "\n\n")
    ;; add search and reset buttons
    (comb--create-button-widget "(R)eset" #'comb--configuration-load-ui)
    (widget-insert " ")
@@ -57,19 +57,28 @@
 
 (defun comb--create-list-widget (placeholder)
   "Editable list widget using PLACEHOLDER as a default value."
-  (widget-create
-   'editable-list
-   :entry-format "%d %v"
-   :delete-button-args '(:tag "-")
-   :append-button-args '(:tag "+")
-   `(cons :format "%v"
-          ;; [] consistency with buttons
-          (toggle :format ,(format "%%[%s%%v%s%%]"
-                                   widget-push-button-prefix
-                                   widget-push-button-suffix)
-                  :on "✓" :off "✗" :value t
-                  :help-echo "Toggle this item")
-          (regexp :format " %v" :value ,placeholder))))
+  (let (widget)
+    ;; create the list
+    (setq widget
+          (widget-create
+           'editable-list
+           :entry-format "%d %v"
+           :delete-button-args '(:tag "-")
+           :append-button-args '(:tag "+")
+           `(cons :format "%v"
+                  ;; [] consistency with buttons
+                  (toggle :format ,(format "%%[%s%%v%s%%]"
+                                           widget-push-button-prefix
+                                           widget-push-button-suffix)
+                          :on "✓" :off "✗" :value t
+                          :help-echo "Toggle this item")
+                  (regexp :format " %v" :value ,placeholder))))
+    ;; create import/export buttons
+    (comb--create-button-widget "Import" (comb--configuration-import widget))
+    (widget-insert " ")
+    (comb--create-button-widget "Export" (comb--configuration-export widget))
+    (widget-insert "\n")
+    widget))
 
 (defun comb--create-button-widget (tag action)
   "Button widget given TAG and ACTION."
@@ -112,6 +121,19 @@
   "Quit the configuration buffer committing changes to the session."
   (comb--configuration-save-ui)
   (kill-buffer))
+
+(defun comb--configuration-import (widget)
+  "Import patterns for WIDGET from file."
+  (lambda ()
+    (widget-value-set
+     widget (append (widget-value widget)
+                    (cdr (comb--prompt-load-value "List file: "))))
+    (widget-setup)))
+
+(defun comb--configuration-export (widget)
+  "Export the patterns of WIDGET to file."
+  (lambda ()
+    (comb--prompt-save-value "List file: " (widget-value widget))))
 
 (provide 'comb-configure)
 
