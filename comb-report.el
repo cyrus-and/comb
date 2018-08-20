@@ -2,9 +2,9 @@
 
 ;;; Code:
 
-(require 'comb-common)
 (require 'comb-filter)
 (require 'comb-session)
+(require 'comb-common)
 
 (declare-function comb--display "comb-browse")
 

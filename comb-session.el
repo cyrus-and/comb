@@ -83,6 +83,36 @@
           (message "Session not saved") nil)
       (message "Cannot access %s" path) nil)))
 
+(defun comb--valid-cursor-p (&optional cursor)
+  "Return non-nil if the cursor (or CURSOR) is valid."
+  (let ((cursor (or cursor (comb--cursor))))
+    (and (>= cursor 0) (< cursor (length (comb--results))))))
+
+(defun comb--get-result (&optional cursor)
+  "Get the result under the cursor (or CURSOR)."
+  (aref (comb--results) (or cursor (comb--cursor))))
+
+(defun comb--get-info (&optional result)
+  "Obtain the information associated to the current result (or RESULT)."
+  (gethash (or result (comb--get-result)) (comb--infos)))
+
+(defmacro comb--with-info (info &rest body)
+  "Utility to modify the information associated access the current result.
+
+INFO is the name of the information variable used in BODY."
+  `(condition-case nil
+       (let (result ,info)
+         ;; get result
+         (setq result (comb--get-result))
+         ;; get associated info
+         (setq ,info (gethash result (comb--infos) (cons nil nil)))
+         ;; execute the user-provided body using info
+         ,@body
+         ;; update only if needed
+         (unless (equal ,info (cons nil nil))
+           (puthash result ,info (comb--infos))))
+     (args-out-of-range nil)))
+
 (provide 'comb-session)
 
 ;;; comb-session.el ends here

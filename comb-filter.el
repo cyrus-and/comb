@@ -2,7 +2,7 @@
 
 ;;; Code:
 
-(require 'comb-common)
+(require 'comb-session)
 
 (require 'subr-x)
 
