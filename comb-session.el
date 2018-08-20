@@ -2,6 +2,8 @@
 
 ;;; Code:
 
+(require 'comb-common)
+
 (require 'cl-macs)
 
 (defvar comb--session-file nil
@@ -49,39 +51,28 @@
 
 (defun comb--session-load ()
   "Load a session from file."
-  (let (path session)
-    (setq path (read-file-name "Session file: "))
-    (if (and (file-readable-p path)
-             (not (file-directory-p path)))
-        (if (or (null comb--session)
-                (yes-or-no-p "Really discard the current session? "))
-            (with-temp-buffer
-              (insert-file-contents path)
-              (ignore-errors (setq session (read (current-buffer))))
-              (if (comb--session-p session)
-                  (progn
-                    (setq comb--session-file path)
-                    (setq comb--session session)
-                    (message "Session loaded from %s" path) t)
-                (message "Invalid session file %s" path) nil))
-          (message "Session not loaded") nil)
-      (message "Cannot access %s" path) nil)))
+  (let (result path session)
+    (setq result (comb--prompt-load-value "Session file: "))
+    (setq path (car result))
+    (setq session (cdr result))
+    (when (and result
+               (or (null comb--session)
+                   (yes-or-no-p "Really discard the current session? ")))
+      (if (comb--session-p session)
+          (progn
+            (setq comb--session-file path)
+            (setq comb--session session)
+            (message "Session loaded from %s" path) t)
+        (message "Invalid session file %s" path) nil))))
 
 (defun comb--session-save ()
   "Save the current session to file."
   (let (path)
-    (setq path (or comb--session-file
-                   (read-file-name-default "Session file: ")))
-    (if (and (file-writable-p path)
-             (not (file-directory-p path)))
-        (if (or (not (file-exists-p path))
-                (yes-or-no-p (format "Really overwrite %s? " path)))
-            (with-temp-file path
-              (prin1 comb--session (current-buffer))
-              (setq comb--session-file path)
-              (message "Session saved to %s" path) t)
-          (message "Session not saved") nil)
-      (message "Cannot access %s" path) nil)))
+    (setq path (comb--prompt-save-value
+                "Session file: " comb--session comb--session-file))
+    (when path
+      (setq comb--session-file path)
+      (message "Session saved to %s" path))))
 
 (defun comb--valid-cursor-p (&optional cursor)
   "Return non-nil if the cursor (or CURSOR) is valid."

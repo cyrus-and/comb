@@ -77,6 +77,30 @@ BODY is executed in the context of the newly created buffer."
        (let ((inhibit-read-only t)) ,@body)
        (set-buffer-modified-p nil))))
 
+(defun comb--prompt-save-value (prompt value &optional path)
+  "Utility to save VALUE to PATH.
+
+If PATH is nil then PROMPT is used to ask the user."
+  (let ((path (or path (read-file-name-default prompt))))
+    (if (and (file-writable-p path)
+             (not (file-directory-p path)))
+        (when (or (not (file-exists-p path))
+                  (yes-or-no-p (format "Really overwrite %s? " path)))
+          (with-temp-file path (prin1 value (current-buffer))) path)
+      (message "Cannot access %s" path) nil)))
+
+(defun comb--prompt-load-value (prompt &optional path)
+  "Utility to load a value from PATH.
+
+If PATH is nil then PROMPT is used to ask the user."
+  (let ((path (or path (read-file-name-default prompt))))
+    (if (and (file-readable-p path)
+             (not (file-directory-p path)))
+        (with-temp-buffer
+          (insert-file-contents path)
+          (ignore-errors (cons path (read (current-buffer)))))
+      (message "Cannot access %s" path) nil)))
+
 (provide 'comb-common)
 
 ;;; comb-common.el ends here
