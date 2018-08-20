@@ -34,14 +34,11 @@ In doing so the cursor is reset to the beginning."
 REGEXP is a cons list in the form (ENABLED . REGEXP), only those
 that have ENABLED non-nil and are not empty are included in the
 result."
-  (let ((enabled
-         (seq-filter
-          (lambda (item)
-            (and (car item) (not (equal (cdr item) ""))))
-          regexps)))
-    (if enabled
-        (format "\\(%s\\)" (mapconcat #'cdr enabled "\\|"))
-      nil)))
+  (let (filter enabled)
+    (setq filter (lambda (item) (and (car item) (not (equal (cdr item) "")))))
+    (setq enabled (seq-filter filter regexps))
+    (when enabled
+      (format "\\(%s\\)" (mapconcat #'cdr enabled "\\|")))))
 
 (defun comb--find (&optional path include-file exclude-path)
   "Walk PATH and return a list of paths.
