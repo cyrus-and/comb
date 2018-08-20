@@ -13,9 +13,6 @@
 (require 'seq)
 (require 'subr-x)
 
-(defconst comb--buffer-name "*Comb*"
-  "Comb main buffer name.")
-
 (defconst comb-default-keybindings
   '(("h" . comb-help)
     ("c" . comb-configure)
@@ -70,12 +67,12 @@
     ;; XXX kill the comb buffer anyway, the creation of an indirect buffer
     ;; should be cheap so it may not be worth it to reuse it when the file does
     ;; not change
-    (ignore-errors (kill-buffer comb--buffer-name))
+    (comb--kill-main-buffer)
     (with-current-buffer
         ;; create an empty buffer or make an indirect copy cloning the state
         (if comb--displayed-buffer
-            (make-indirect-buffer comb--displayed-buffer comb--buffer-name t)
-          (get-buffer-create comb--buffer-name))
+            (make-indirect-buffer comb--displayed-buffer "*Comb*" t)
+          (get-buffer-create "*Comb*"))
       ;; setup the newly created buffer
       (suppress-keymap comb-keymap)
       (use-local-map comb-keymap)
@@ -90,10 +87,6 @@
       ;; center the result in the current window
       (when comb--displayed-buffer
         (comb--center-region begin end)))))
-
-(defun comb--kill ()
-  "Kill the Comb buffer."
-  (ignore-errors (kill-buffer comb--buffer-name)))
 
 (defun comb--set-header (result)
   "Set the header for the current buffer using RESULT."
@@ -309,6 +302,7 @@
   "Create a new session using the current directory as root."
   (interactive)
   (when (comb--session-new)
+    (comb--kill-buffers)
     (comb--display)))
 
 ;;;###autoload
@@ -316,6 +310,7 @@
   "Load the session from file."
   (interactive)
   (when (comb--session-load)
+    (comb--kill-buffers)
     (comb--display)))
 
 (defun comb-save ()

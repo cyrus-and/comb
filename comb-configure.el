@@ -10,7 +10,6 @@
 (require 'seq)
 
 (declare-function comb--display "comb-browse")
-(declare-function comb--kill "comb-browse")
 
 (defvar comb--root-widget)
 (defvar comb--patterns-widget)
@@ -115,7 +114,7 @@
   (redisplay) ; allow to show the unmodified mark immediately
   (if (comb--search)
       (progn (kill-buffer) (comb--display))
-    (comb--kill)))
+    (comb--kill-main-buffer)))
 
 (defun comb--configuration-quit ()
   "Quit the configuration buffer committing changes to the session."

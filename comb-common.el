@@ -101,6 +101,14 @@ If PATH is nil then PROMPT is used to ask the user."
           (ignore-errors (cons path (read (current-buffer)))))
       (message "Cannot access %s" path) nil)))
 
+(defun comb--kill-buffers ()
+  "Kill all the Comb buffers."
+  (kill-matching-buffers "^\\*Comb" nil t))
+
+(defun comb--kill-main-buffer ()
+  "Kill just the main buffer."
+  (kill-matching-buffers "^\\*Comb\\*$" nil t))
+
 (provide 'comb-common)
 
 ;;; comb-common.el ends here
