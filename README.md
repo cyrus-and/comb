@@ -11,9 +11,14 @@ asses proper matches during manual static analysis.
 
 ### [MELPA] package
 
+Waiting for [approval](https://github.com/melpa/melpa/pull/5684), use any other
+approach in the meantime.
+
+<!--
 ```
 M-x package-install RET comb
 ```
+-->
 
 [MELPA]: https://melpa.org/#/getting-started
 
