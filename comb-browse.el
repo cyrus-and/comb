@@ -68,9 +68,12 @@
 (defvar comb--displayed-buffer nil
   "Visited buffer containing the current result.")
 
-(defun comb--display ()
-  "Display the current result in the Comb buffer."
-  (let (result relative-path path begin end)
+(defun comb--display (&optional update-only)
+  "Display the current result in the Comb buffer.
+
+If UPDATE-ONLY the buffer is not recreated and the point is not
+moved, only the header line is updated."
+  (let (result relative-path path begin end buffer)
     ;; when a proper result has to be displayed
     (if (not (comb--valid-cursor-p))
         (setq comb--displayed-buffer nil)
@@ -85,29 +88,34 @@
           (setq comb--displayed-buffer nil)
         ;; visit the file omitting warnings (e.g., same file)
         (setq comb--displayed-buffer (find-file-noselect path t))))
-    ;; XXX kill the comb buffer anyway, the creation of an indirect buffer
-    ;; should be cheap so it may not be worth it to reuse it when the file does
-    ;; not change
-    (comb--kill-main-buffer)
-    (with-current-buffer
-        ;; create an empty buffer or make an indirect copy cloning the state
-        (if comb--displayed-buffer
-            (make-indirect-buffer comb--displayed-buffer "*Comb*" t)
-          (get-buffer-create "*Comb*"))
-      ;; setup the newly created buffer
-      (suppress-keymap comb-keymap)
-      (use-local-map comb-keymap)
-      (read-only-mode 1)
-      ;; highlight the match
-      (when comb--displayed-buffer
-        (overlay-put (make-overlay begin end) 'face 'comb-match))
-      ;; place information in the header line
-      (comb--set-header result)
-      ;; switch to the comb buffer
-      (switch-to-buffer (current-buffer))
-      ;; center the result in the current window
-      (when comb--displayed-buffer
-        (comb--center-region begin end)))))
+    ;; create and set up the comb buffer if requested
+    (unless update-only
+      ;; XXX kill the comb buffer anyway, the creation of an indirect buffer
+      ;; should be cheap so it may not be worth it to reuse it when the file
+      ;; does not change
+      (comb--kill-main-buffer)
+      (with-current-buffer
+          ;; create an empty buffer or make an indirect copy cloning the state
+          (if comb--displayed-buffer
+              (make-indirect-buffer comb--displayed-buffer "*Comb*" t)
+            (get-buffer-create "*Comb*"))
+        ;; setup the newly created buffer
+        (suppress-keymap comb-keymap)
+        (use-local-map comb-keymap)
+        (read-only-mode 1)
+        ;; highlight the match
+        (when comb--displayed-buffer
+          (overlay-put (make-overlay begin end) 'face 'comb-match))
+        ;; switch to the comb buffer
+        (switch-to-buffer (current-buffer))
+        ;; center the result in the current window
+        (when comb--displayed-buffer
+          (comb--center-region begin end))))
+    ;; just update the header line of the comb buffer, if any
+    (when (setq buffer (get-buffer "*Comb*"))
+      (with-current-buffer buffer
+        ;; place information in the header line
+        (comb--set-header result)))))
 
 (defun comb--set-header (result)
   "Set the header for the current buffer using RESULT."
@@ -244,21 +252,21 @@
   (interactive)
   (when comb--session
     (comb--with-info info (setcar info 'approved))
-    (comb--display)))
+    (comb--display t)))
 
 (defun comb-reject ()
   "Mark the current result as rejected."
   (interactive)
   (when comb--session
     (comb--with-info info (setcar info 'rejected))
-    (comb--display)))
+    (comb--display t)))
 
 (defun comb-undecide ()
   "Mark the current result as undecided."
   (interactive)
   (when comb--session
     (comb--with-info info (setcar info nil))
-    (comb--display)))
+    (comb--display t)))
 
 (defun comb-approve-next ()
   "Mark the current result as approved and go to the next."
@@ -291,7 +299,7 @@
     (let (values)
       (setq values '(nil approved rejected t)) ; XXX nil must be the first value
       (setf (comb--status-filter) (cadr (member (comb--status-filter) values))))
-    (comb--display)))
+    (comb--display t)))
 
 (defun comb-set-notes-filter ()
   "Set the notes filter."
@@ -299,7 +307,7 @@
   (when comb--session
     (setf (comb--notes-filter)
           (read-string "Notes filter regexp: " (comb--notes-filter)))
-    (comb--display)))
+    (comb--display t)))
 
 (defun comb-annotate ()
   "Annotate the current result."
@@ -310,7 +318,7 @@
        info
        (setq notes (read-string "Notes: " (cdr info)))
        (setcdr info (if (string-blank-p notes) nil (string-trim notes))))
-      (comb--display))))
+      (comb--display t))))
 
 (defun comb-configure ()
   "Show the configuration buffer."
