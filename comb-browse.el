@@ -103,7 +103,7 @@
         (overlay-put (make-overlay begin end) 'face 'comb-match))
       ;; place information in the header line
       (comb--set-header result)
-      ;; switch to the comb buffer if requested
+      ;; switch to the comb buffer
       (switch-to-buffer (current-buffer))
       ;; center the result in the current window
       (when comb--displayed-buffer
