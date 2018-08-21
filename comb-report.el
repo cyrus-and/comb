@@ -1,4 +1,4 @@
-;;; comb-report.el --- Report view -*- lexical-binding: t -*-
+;;; comb-report.el --- Report buffer -*- lexical-binding: t -*-
 
 ;;; Code:
 

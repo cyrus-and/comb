@@ -1,4 +1,4 @@
-;;; comb-browse.el --- Interactive menu -*- lexical-binding: t -*-
+;;; comb-browse.el --- Interactive browsing buffer -*- lexical-binding: t -*-
 
 ;;; Code:
 
