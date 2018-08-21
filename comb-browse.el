@@ -18,6 +18,7 @@
     ("c" . comb-configure)
     ("p" . comb-prev)
     ("n" . comb-next)
+    ("g" . comb-goto)
     ("<" . comb-begin)
     (">" . comb-end)
     ("a" . comb-approve)
@@ -196,6 +197,12 @@
   (interactive)
   (when comb--session
     (comb--seek +1)
+    (comb--display)))
+
+(defun comb-goto ()
+  "Return to the current result."
+  (interactive)
+  (when comb--session
     (comb--display)))
 
 (defun comb-begin ()
