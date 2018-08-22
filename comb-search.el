@@ -51,7 +51,7 @@ In doing so the cursor is reset to the beginning."
 (defun comb--merge-regexps (regexps)
   "Merge REGEXPS into one regexp that matches any of them.
 
-REGEXP is a cons list in the form (ENABLED . REGEXP), only those
+REGEXPS is a cons list in the form (ENABLED . REGEXP), only those
 that have ENABLED non-nil and are not empty are included in the
 result."
   (let (filter enabled)
@@ -62,6 +62,7 @@ result."
 
 (defun comb--find (&optional path include-file exclude-path)
   "Walk PATH and return a list of paths.
+
 The paths are relative to `default-directory' if PATH is not an
 absolute path.  If PATH empty or nil then `default-directory' is
 used.
@@ -103,6 +104,7 @@ this function fails."
 
 (defun comb--grep (path pattern)
   "Return the list of all the occurrences of PATTERN in PATH.
+
 The list is a list of conses in the form (BEGIN . END) in point
 coordinates."
   ;; disable case-insensitive search
@@ -127,9 +129,11 @@ coordinates."
     (nreverse output)))
 
 (defun comb--find-grep (pattern root &optional include-file exclude-path)
-  "Search PATTERN in all the files in ROOT applying.
+  "Search PATTERN in all the matching files in ROOT.
+
 This is basically a composition of `comb--find' and `comb--grep'
-but returns a vector of results in the form (PATH . (BEGIN . END)).
+but returns a vector of results in the form (PATH . (BEGIN
+. END)).
 
 If ROOT is not an absolute path then it is considered relative to
 the filesystem root directory.
