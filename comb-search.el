@@ -167,7 +167,7 @@ reported to *Messages*. The same goes for CALLBACKS errors."
         ;; just notify errors for unreadable files
         (file-error (message (error-message-string err))))
       ;; append the results
-      (dolist (position (append occurrences callbacks-results))
+      (dolist (position (nconc occurrences callbacks-results))
         (push (cons path position) output)))
     ;; return the vector of all the results
     (nreverse (vconcat output))))
