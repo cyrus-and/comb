@@ -159,13 +159,14 @@ reported to *Messages*. The same goes for CALLBACKS errors."
               (setq occurrences (comb--grep pattern (current-buffer))))
             ;; apply callbacks to the file and append also those results
             (setq callbacks-results
-                  (condition-case err
-                      (mapcan (lambda (callback)
-                                (goto-char (point-min))
-                                (funcall callback path (current-buffer)))
-                              callbacks)
-                    ;; just notify errors for callbacks errors
-                    (error (message "%s" (error-message-string err)) nil))))
+                  (mapcan
+                   (lambda (callback)
+                     (goto-char (point-min))
+                     (condition-case err
+                         (funcall callback path (current-buffer))
+                       ;; just notify errors for callbacks errors
+                       (error (message "%s" (error-message-string err)) nil)))
+                   callbacks)))
         ;; just notify errors for unreadable files
         (file-error (message (error-message-string err))))
       ;; append the results sorted according to the match beginning
