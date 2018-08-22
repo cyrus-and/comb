@@ -37,6 +37,7 @@
 (cl-defstruct (comb--session (:type vector) :named)
   (root (abbreviate-file-name default-directory))
   (patterns nil)
+  (callbacks nil)
   (include-files nil)
   (exclude-paths nil)
   (results [])
@@ -48,6 +49,7 @@
 
 (defmacro comb--root          () '(comb--session-root          comb--session))
 (defmacro comb--patterns      () '(comb--session-patterns      comb--session))
+(defmacro comb--callbacks     () '(comb--session-callbacks     comb--session))
 (defmacro comb--include-files () '(comb--session-include-files comb--session))
 (defmacro comb--exclude-paths () '(comb--session-exclude-paths comb--session))
 (defmacro comb--results       () '(comb--session-results       comb--session))

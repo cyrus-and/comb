@@ -26,20 +26,18 @@
 
 (require 'seq)
 
-(defun comb--search ()
-  "Perform the lookup according to the session and save the results.
+(defun comb--search (pattern callbacks include-file exclude-path)
+  "Perform the lookup of PATTERN and execute CALLBACKS according to the session.
+
+See `comb-find' for the meaning of arguments.
 
 In doing so the cursor is reset to the beginning."
-  (let (pattern callbacks results)
-    (setq pattern (comb--pattern-list-merge (comb--patterns)))
-    (setq callbacks (comb--pattern-list-extract-callbacks (comb--patterns)))
+  (let (results)
     (if (or pattern callbacks)
         (condition-case err
             (progn
-              (setq results (comb--find-grep
-                             pattern callbacks (comb--root)
-                             (comb--pattern-list-merge (comb--include-files))
-                             (comb--pattern-list-merge (comb--exclude-paths))))
+              (setq results (comb--find-grep pattern callbacks (comb--root)
+                                             include-file exclude-path))
               ;; replace the results
               (setf (comb--results) results)
               (setf (comb--cursor) -1)
@@ -49,31 +47,6 @@ In doing so the cursor is reset to the beginning."
           (quit (message "Search aborted") nil)
           (file-error (message (error-message-string err)) nil))
       (message "No pattern specified") nil)))
-
-(defun comb--pattern-list-merge (pattern-list)
-  "Merge PATTERN-LIST into one regexp that matches any of them.
-
-PATTERN-LIST is a cons list in the form (ENABLED . REGEXP), only
-those that have ENABLED non-nil and are not empty strings are
-included in the result."
-  (let (filter enabled)
-    (setq filter (lambda (item)
-                   (and (car item)
-                        (stringp (cdr item))
-                        (not (equal (cdr item) "")))))
-    (setq enabled (seq-filter filter pattern-list))
-    (when enabled
-      (format "\\(%s\\)" (mapconcat #'cdr enabled "\\|")))))
-
-(defun comb--pattern-list-extract-callbacks (pattern-list)
-  "Extract callback items from PATTERN-LIST.
-
-PATTERN-LIST is a cons list in the form (ENABLED . REGEXP), only
-those that have ENABLED non-nil and are functions are included in
-the result."
-  (let (filter)
-    (setq filter (lambda (item) (and (car item) (functionp (cdr item)))))
-    (mapcar #'cdr (seq-filter filter pattern-list))))
 
 (defun comb--find (&optional path include-file exclude-path)
   "Walk PATH and return a list of paths.

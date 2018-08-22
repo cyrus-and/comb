@@ -33,6 +33,7 @@
 
 (defvar comb--root-widget)
 (defvar comb--patterns-widget)
+(defvar comb--callbacks-widget)
 (defvar comb--include-files-widget)
 (defvar comb--exclude-paths-widget)
 
@@ -57,7 +58,11 @@
    ;; add regexp lists
    (widget-insert "Search for:\n\n")
    (setq comb--patterns-widget
-         (comb--create-regex-function-list-widget "\\<word\\>"))
+         (comb--create-regex-list-widget "\\<word\\>"))
+   (widget-insert "\n")
+   (widget-insert "Including the output of:\n\n")
+   (setq comb--callbacks-widget
+         (comb--create-function-list-widget 'ignore))
    (widget-insert "\n")
    (widget-insert "Including file names matching:\n\n")
    (setq comb--include-files-widget
@@ -89,7 +94,7 @@
            :append-button-args '(:tag "+")
            `(cons :format "%v"
                   ;; [] consistency with buttons
-                  (toggle :format ,(format "%%[%s%%v%s%%] "
+                  (toggle :format ,(format "%%[%s%%v%s%%]"
                                            widget-push-button-prefix
                                            widget-push-button-suffix)
                           :on "✓" :off "✗" :value t
@@ -105,14 +110,12 @@
 (defun comb--create-regex-list-widget (placeholder)
   "Editable regexp list widget."
   (comb--create-list-widget
-   `(regexp :format "%v" :value ,placeholder)))
+   `(regexp :format " %v" :value ,placeholder)))
 
-(defun comb--create-regex-function-list-widget (placeholder)
+(defun comb--create-function-list-widget (placeholder)
   "Editable regex or function list widget."
   (comb--create-list-widget
-   `(choice :format "%[%t%] %v"
-            (regexp :format "%v" :value ,placeholder)
-            (function :format "%v" :value ignore))))
+   `(function :format " %v" :value ,placeholder)))
 
 (defun comb--create-button-widget (tag action)
   "Button widget given TAG and ACTION."
@@ -123,6 +126,23 @@
   "Directory input widget."
   (widget-create 'directory :format "%v"))
 
+(defun comb--pattern-list-merge (pattern-list)
+  "Merge PATTERN-LIST into one regexp that matches any of them."
+  (let (enabled)
+    (setq enabled (comb--editable-list-filter pattern-list))
+    (when enabled
+      (format "\\(%s\\)" (mapconcat #'identity enabled "\\|")))))
+
+(defun comb--editable-list-filter (editable-list)
+  "Extract enabled items from EDITABLE-LIST.
+
+EDITABLE-LIST is a cons list in the form (ENABLED . ITEM), only
+those that have ENABLED non-nil and ITEM non-empty are included
+in the result."
+  (mapcar #'cdr (seq-filter
+                 (lambda (item) (and (car item) (not (equal (cdr item) ""))))
+                 editable-list)))
+
 ;; configuration commands
 
 (defun comb--configuration-load-ui ()
@@ -130,6 +150,7 @@
   (save-mark-and-excursion
     (widget-value-set comb--root-widget (comb--root))
     (widget-value-set comb--patterns-widget (comb--patterns))
+    (widget-value-set comb--callbacks-widget (comb--callbacks))
     (widget-value-set comb--include-files-widget (comb--include-files))
     (widget-value-set comb--exclude-paths-widget (comb--exclude-paths))
     (widget-setup)
@@ -139,6 +160,7 @@
   "Apply the GUI changes to the current session."
   (setf (comb--root) (widget-value comb--root-widget))
   (setf (comb--patterns) (widget-value comb--patterns-widget))
+  (setf (comb--callbacks) (widget-value comb--callbacks-widget))
   (setf (comb--include-files) (widget-value comb--include-files-widget))
   (setf (comb--exclude-paths) (widget-value comb--exclude-paths-widget))
   (set-buffer-modified-p nil))
@@ -147,7 +169,10 @@
   "Start a new search from the configuration buffer."
   (comb--configuration-save-ui)
   (redisplay) ; allow to show the unmodified mark immediately
-  (if (comb--search)
+  (if (comb--search (comb--pattern-list-merge (comb--patterns))
+                    (comb--editable-list-filter (comb--callbacks))
+                    (comb--pattern-list-merge (comb--include-files))
+                    (comb--pattern-list-merge (comb--exclude-paths)))
       (progn (kill-buffer) (comb--display))
     (comb--kill-main-buffer)))
 
