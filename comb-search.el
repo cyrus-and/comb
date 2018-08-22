@@ -94,7 +94,9 @@ this function fails."
   "Return the list of all the occurrences of PATTERN in BUFFER.
 
 The list is a list of conses in the form (BEGIN . END) in point
-coordinates."
+coordinates.
+
+Note the returned list is in reversed order."
   ;; disable case-insensitive search
   (let (output (case-fold-search nil))
     (with-current-buffer buffer
@@ -108,7 +110,7 @@ coordinates."
         ;; exit on EOF due to `forward-char'
         (end-of-buffer)))
     ;; return the list of all the occurrences
-    (nreverse output)))
+    output))
 
 (defun comb--find-grep (pattern callbacks root &optional include-file exclude-path)
   "Search PATTERN and apply CALLBACKS in all the matching files in ROOT.
@@ -166,8 +168,9 @@ reported to *Messages*. The same goes for CALLBACKS errors."
                     (error (message "%s" (error-message-string err)) nil))))
         ;; just notify errors for unreadable files
         (file-error (message (error-message-string err))))
-      ;; append the results
-      (dolist (position (nconc occurrences callbacks-results))
+      ;; append the results sorted according to the match beginning
+      (dolist (position (sort (nconc occurrences callbacks-results)
+                              (lambda (x y) (< (car x) (car y)))))
         (push (cons path position) output)))
     ;; return the vector of all the results
     (nreverse (vconcat output))))
