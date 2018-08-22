@@ -117,20 +117,14 @@ this function fails."
         ;; XXX nconc is O(length-of-all-but-last-list)
         (setq output (nconc output partial))))))
 
-(defun comb--grep (path pattern)
-  "Return the list of all the occurrences of PATTERN in PATH.
+(defun comb--grep (pattern buffer)
+  "Return the list of all the occurrences of PATTERN in BUFFER.
 
 The list is a list of conses in the form (BEGIN . END) in point
 coordinates."
   ;; disable case-insensitive search
   (let (output (case-fold-search nil))
-    ;; load the file in a temporary buffer
-    (with-temp-buffer
-      (insert-file-contents-literally path)
-      ;; XXX this is faster than `decode-coding-inserted-region' but it may
-      ;; result in a wrong guesswork theoretically (still not reproducible in
-      ;; practice)
-      (decode-coding-region (point-min) (point-max) 'undecided)
+    (with-current-buffer buffer
       ;; lookup the next pattern until EOF
       (condition-case nil
           (while (re-search-forward pattern nil t)
@@ -146,8 +140,8 @@ coordinates."
 (defun comb--find-grep (pattern callbacks root &optional include-file exclude-path)
   "Search PATTERN and apply CALLBACKS in all the matching files in ROOT.
 
-CALLBACKS is a list of functions each taking a filename as an
-argument and returning a list of occurrences just like
+CALLBACKS is a list of functions each taking a filename and a
+buffer as arguments and returning a list of occurrences just like
 `comb--grep' does.
 
 This is basically a composition of `comb--find' and `comb--grep'
@@ -177,19 +171,28 @@ reported to *Messages*. The same goes for CALLBACKS errors."
         (let ((message-log-max nil))
           (message "Searching... %s%%"
                    (truncate (* (/ i (float file-list-length)) 100)))))
-      ;; find the occurrences for the current file catching errors
-      (when pattern
-        (setq occurrences
-              (condition-case err
-                  (comb--grep path pattern)
-                ;; just notify errors for unreadable files
-                (file-error (message (error-message-string err)) nil))))
-      ;; apply callbacks to the file and append also those results
-      (setq callbacks-results
-            (condition-case err
-                (mapcan (lambda (callback) (funcall callback path)) callbacks)
-              ;; just notify errors for callbacks errors
-              (error (message (error-message-string err)) nil)))
+      ;; load the file in a temporary buffer
+      (condition-case err
+          (with-temp-buffer
+            (insert-file-contents-literally path)
+            ;; XXX this is faster than `decode-coding-inserted-region' but it
+            ;; may result in a wrong guesswork theoretically (still not
+            ;; reproducible in practice)
+            (decode-coding-region (point-min) (point-max) 'undecided)
+            ;; find the occurrences for the current file catching errors
+            (when pattern
+              (setq occurrences (comb--grep pattern (current-buffer))))
+            ;; apply callbacks to the file and append also those results
+            (setq callbacks-results
+                  (condition-case err
+                      (mapcan (lambda (callback)
+                                (goto-char (point-min))
+                                (funcall callback path (current-buffer)))
+                              callbacks)
+                    ;; just notify errors for callbacks errors
+                    (error (message "%s" (error-message-string err)) nil))))
+        ;; just notify errors for unreadable files
+        (file-error (message (error-message-string err))))
       ;; append the results
       (dolist (position (append occurrences callbacks-results))
         (push (cons path position) output)))
