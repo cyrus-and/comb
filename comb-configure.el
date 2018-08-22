@@ -60,17 +60,17 @@
    (setq comb--patterns-widget
          (comb--create-regex-list-widget "\\<word\\>"))
    (widget-insert "\n")
-   (widget-insert "Including the output of:\n\n")
-   (setq comb--callbacks-widget
-         (comb--create-function-list-widget 'ignore))
-   (widget-insert "\n")
-   (widget-insert "Including file names matching:\n\n")
+   (widget-insert "In files matching:\n\n")
    (setq comb--include-files-widget
          (comb--create-regex-list-widget "\\.extension$"))
    (widget-insert "\n")
-   (widget-insert "Excluding directory names matching:\n\n")
+   (widget-insert "Skipping directories matching:\n\n")
    (setq comb--exclude-paths-widget
          (comb--create-regex-list-widget "^some/directory$"))
+   (widget-insert "\n")
+   (widget-insert "Including results from:\n\n")
+   (setq comb--callbacks-widget
+         (comb--create-function-list-widget 'ignore))
    (widget-insert "\n\n")
    ;; add search and reset buttons
    (comb--create-button-widget "(R)eset" #'comb--configuration-load-ui)
