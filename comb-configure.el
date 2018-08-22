@@ -56,13 +56,16 @@
    (widget-insert "\n")
    ;; add regexp lists
    (widget-insert "Search for:\n\n")
-   (setq comb--patterns-widget (comb--create-list-widget "\\<word\\>"))
+   (setq comb--patterns-widget
+         (comb--create-regex-function-list-widget "\\<word\\>"))
    (widget-insert "\n")
    (widget-insert "Including file names matching:\n\n")
-   (setq comb--include-files-widget (comb--create-list-widget "\\.extension$"))
+   (setq comb--include-files-widget
+         (comb--create-regex-list-widget "\\.extension$"))
    (widget-insert "\n")
    (widget-insert "Excluding directory names matching:\n\n")
-   (setq comb--exclude-paths-widget (comb--create-list-widget "^some/directory$"))
+   (setq comb--exclude-paths-widget
+         (comb--create-regex-list-widget "^some/directory$"))
    (widget-insert "\n\n")
    ;; add search and reset buttons
    (comb--create-button-widget "(R)eset" #'comb--configuration-load-ui)
@@ -74,8 +77,8 @@
    (comb--configuration-load-ui)
    (goto-char (point-min))))
 
-(defun comb--create-list-widget (placeholder)
-  "Editable list widget using PLACEHOLDER as a default value."
+(defun comb--create-list-widget (item)
+  "Editable list widget of ITEM."
   (let (widget)
     ;; create the list
     (setq widget
@@ -86,18 +89,30 @@
            :append-button-args '(:tag "+")
            `(cons :format "%v"
                   ;; [] consistency with buttons
-                  (toggle :format ,(format "%%[%s%%v%s%%]"
+                  (toggle :format ,(format "%%[%s%%v%s%%] "
                                            widget-push-button-prefix
                                            widget-push-button-suffix)
                           :on "✓" :off "✗" :value t
                           :help-echo "Toggle this item")
-                  (regexp :format " %v" :value ,placeholder))))
+                  ,item)))
     ;; create import/export buttons
     (comb--create-button-widget "Import" (comb--configuration-import widget))
     (widget-insert " ")
     (comb--create-button-widget "Export" (comb--configuration-export widget))
     (widget-insert "\n")
     widget))
+
+(defun comb--create-regex-list-widget (placeholder)
+  "Editable regexp list widget."
+  (comb--create-list-widget
+   `(regexp :format "%v" :value ,placeholder)))
+
+(defun comb--create-regex-function-list-widget (placeholder)
+  "Editable regex or function list widget."
+  (comb--create-list-widget
+   `(choice :format "%[%t%] %v"
+            (regexp :format "%v" :value ,placeholder)
+            (function :format "%v" :value ignore))))
 
 (defun comb--create-button-widget (tag action)
   "Button widget given TAG and ACTION."

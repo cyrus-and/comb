@@ -30,14 +30,16 @@
   "Perform the lookup according to the session and save the results.
 
 In doing so the cursor is reset to the beginning."
-  (let (pattern results)
-    (if (setq pattern (comb--merge-regexps (comb--patterns)))
+  (let (pattern callbacks results)
+    (setq pattern (comb--pattern-list-merge (comb--patterns)))
+    (setq callbacks (comb--pattern-list-extract-callbacks (comb--patterns)))
+    (if (or pattern callbacks)
         (condition-case err
             (progn
               (setq results (comb--find-grep
-                             pattern (comb--root)
-                             (comb--merge-regexps (comb--include-files))
-                             (comb--merge-regexps (comb--exclude-paths))))
+                             pattern callbacks (comb--root)
+                             (comb--pattern-list-merge (comb--include-files))
+                             (comb--pattern-list-merge (comb--exclude-paths))))
               ;; replace the results
               (setf (comb--results) results)
               (setf (comb--cursor) -1)
@@ -48,17 +50,30 @@ In doing so the cursor is reset to the beginning."
           (file-error (message (error-message-string err)) nil))
       (message "No pattern specified") nil)))
 
-(defun comb--merge-regexps (regexps)
-  "Merge REGEXPS into one regexp that matches any of them.
+(defun comb--pattern-list-merge (pattern-list)
+  "Merge PATTERN-LIST into one regexp that matches any of them.
 
-REGEXPS is a cons list in the form (ENABLED . REGEXP), only those
-that have ENABLED non-nil and are not empty are included in the
-result."
+PATTERN-LIST is a cons list in the form (ENABLED . REGEXP), only
+those that have ENABLED non-nil and are not empty strings are
+included in the result."
   (let (filter enabled)
-    (setq filter (lambda (item) (and (car item) (not (equal (cdr item) "")))))
-    (setq enabled (seq-filter filter regexps))
+    (setq filter (lambda (item)
+                   (and (car item)
+                        (stringp (cdr item))
+                        (not (equal (cdr item) "")))))
+    (setq enabled (seq-filter filter pattern-list))
     (when enabled
       (format "\\(%s\\)" (mapconcat #'cdr enabled "\\|")))))
+
+(defun comb--pattern-list-extract-callbacks (pattern-list)
+  "Extract callback items from PATTERN-LIST.
+
+PATTERN-LIST is a cons list in the form (ENABLED . REGEXP), only
+those that have ENABLED non-nil and are functions are included in
+the result."
+  (let (filter)
+    (setq filter (lambda (item) (and (car item) (functionp (cdr item)))))
+    (mapcar #'cdr (seq-filter filter pattern-list))))
 
 (defun comb--find (&optional path include-file exclude-path)
   "Walk PATH and return a list of paths.
@@ -128,8 +143,12 @@ coordinates."
     ;; return the list of all the occurrences
     (nreverse output)))
 
-(defun comb--find-grep (pattern root &optional include-file exclude-path)
-  "Search PATTERN in all the matching files in ROOT.
+(defun comb--find-grep (pattern callbacks root &optional include-file exclude-path)
+  "Search PATTERN and apply CALLBACKS in all the matching files in ROOT.
+
+CALLBACKS is a list of functions each taking a filename as an
+argument and returning a list of occurrences just like
+`comb--grep' does.
 
 This is basically a composition of `comb--find' and `comb--grep'
 but returns a vector of results in the form (PATH . (BEGIN
@@ -139,8 +158,9 @@ If ROOT is not an absolute path then it is considered relative to
 the filesystem root directory.
 
 The failure to open a file for reading is not fatal and is
-reported to *Messages*."
-  (let (i file-list file-list-length output occurrences default-directory)
+reported to *Messages*. The same goes for CALLBACKS errors."
+  (let (default-directory i file-list file-list-length output
+         occurrences callbacks-results)
     ;; root defaults to the file system root directory (note, default-directory
     ;; is nil here)
     (setq default-directory (expand-file-name root))
@@ -158,13 +178,20 @@ reported to *Messages*."
           (message "Searching... %s%%"
                    (truncate (* (/ i (float file-list-length)) 100)))))
       ;; find the occurrences for the current file catching errors
-      (setq occurrences
+      (when pattern
+        (setq occurrences
+              (condition-case err
+                  (comb--grep path pattern)
+                ;; just notify errors for unreadable files
+                (file-error (message (error-message-string err)) nil))))
+      ;; apply callbacks to the file and append also those results
+      (setq callbacks-results
             (condition-case err
-                (comb--grep path pattern)
-              ;; just notify errors for unreadable files
-              (file-error (message (error-message-string err)) nil)))
+                (mapcan (lambda (callback) (funcall callback path)) callbacks)
+              ;; just notify errors for callbacks errors
+              (error (message (error-message-string err)) nil)))
       ;; append the results
-      (dolist (position occurrences)
+      (dolist (position (append occurrences callbacks-results))
         (push (cons path position) output)))
     ;; return the vector of all the results
     (nreverse (vconcat output))))
