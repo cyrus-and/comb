@@ -48,7 +48,7 @@ search:
 
 4. fill the desired fields and finally perform a search.
 
-<p align="center"><img src="https://i.imgur.com/PLcDGO6.png" width="628px" alt="Configure"/></p>
+<p align="center"><img src="https://i.imgur.com/xRrx5at.png" width="628px" alt="Configure"/></p>
 
 If there are some results to browse then the `*Comb*` buffer is displayed, from
 here it is possible to annotate the results (`!`) and change their status to
