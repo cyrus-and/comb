@@ -96,6 +96,9 @@ Here is an example callback:
     (list (cons (match-beginning 0) (match-end 0)))))
 ```
 
+Errors in the callback execution are not fatal, they are just reported in the
+`*Messages*` buffer.
+
 ## Configuration
 
 Some faces can be configured, take a look at the `comb` configuration group
