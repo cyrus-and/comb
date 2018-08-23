@@ -87,7 +87,6 @@ this function fails."
            (list full-path))))
       ;; add the partial results in-place, if any
       (when partial
-        ;; XXX nconc is O(length-of-all-but-last-list)
         (setq output (nconc output partial))))))
 
 (defun comb--grep (pattern buffer)
