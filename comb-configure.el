@@ -53,29 +53,36 @@
      keymap)
    ;; add root directory
    (widget-insert "In directory:\n\n")
-   (setq comb--root-widget (comb--create-directory-widget))
+   (setq comb--root-widget
+         (comb--create-directory-widget "Search root directory"))
    (widget-insert "\n")
    ;; add regexp lists
    (widget-insert "Search for regexps:\n\n")
    (setq comb--patterns-widget
-         (comb--create-regex-list-widget "\\<word\\>"))
+         (comb--create-regex-list-widget "\\<word\\>"
+                                         "Search files for this regexp"))
    (widget-insert "\n")
    (widget-insert "In files matching regexps:\n\n")
    (setq comb--include-files-widget
-         (comb--create-regex-list-widget "\\.extension$"))
+         (comb--create-regex-list-widget "\\.extension$"
+                                         "Match only the file name"))
    (widget-insert "\n")
    (widget-insert "Skipping directories matching regexps:\n\n")
    (setq comb--exclude-paths-widget
-         (comb--create-regex-list-widget "^some/directory$"))
+         (comb--create-regex-list-widget "^some/directory$"
+                                         "Match only the directory name"))
    (widget-insert "\n")
    (widget-insert "Including results from callbacks:\n\n")
    (setq comb--callbacks-widget
-         (comb--create-function-list-widget 'some-callback))
+         (comb--create-function-list-widget 'some-callback
+                                            "Function or lambda"))
    (widget-insert "\n\n")
    ;; add search and reset buttons
-   (comb--create-button-widget "(R)eset" #'comb--configuration-load-ui)
+   (comb--create-button-widget "(R)eset" #'comb--configuration-load-ui
+                               "Drop unsaved modifications")
    (widget-insert " ")
-   (comb--create-button-widget "(S)earch" #'comb--configuration-search)
+   (comb--create-button-widget "(S)earch" #'comb--configuration-search
+                               "Perform a new search")
    (widget-insert "\n")
    ;; finalize
    (widget-setup)
@@ -101,30 +108,34 @@
                           :help-echo "Toggle this item")
                   ,item)))
     ;; create import/export buttons
-    (comb--create-button-widget "Import" (comb--configuration-import widget))
+    (comb--create-button-widget "Import" (comb--configuration-import widget)
+                                "Import values from file and add them to these")
     (widget-insert " ")
-    (comb--create-button-widget "Export" (comb--configuration-export widget))
+    (comb--create-button-widget "Export" (comb--configuration-export widget)
+                                "Export these values to file")
     (widget-insert "\n")
     widget))
 
-(defun comb--create-regex-list-widget (placeholder)
+(defun comb--create-regex-list-widget (placeholder help)
   "Editable regexp list widget."
   (comb--create-list-widget
-   `(regexp :format " %v" :value ,placeholder)))
+   `(regexp :format " %v" :value ,placeholder :help-echo ,help)))
 
-(defun comb--create-function-list-widget (placeholder)
+(defun comb--create-function-list-widget (placeholder help)
   "Editable regex or function list widget."
   (comb--create-list-widget
-   `(sexp :format " %v" :value ,placeholder)))
+   `(sexp :format " %v" :value ,placeholder :help-echo ,help)))
 
-(defun comb--create-button-widget (tag action)
+(defun comb--create-button-widget (tag action help)
   "Button widget given TAG and ACTION."
-  (widget-create 'push-button :tag tag
-                 :notify (lambda (&rest _) (funcall action))))
+  (widget-create 'push-button
+                 :tag tag
+                 :notify (lambda (&rest _) (funcall action))
+                 :help-echo help))
 
-(defun comb--create-directory-widget ()
+(defun comb--create-directory-widget (help)
   "Directory input widget."
-  (widget-create 'directory :format "%v"))
+  (widget-create 'directory :format "%v" :help-echo help))
 
 (defun comb--pattern-list-merge (pattern-list)
   "Merge PATTERN-LIST into one regexp that matches any of them."
