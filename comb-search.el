@@ -163,7 +163,7 @@ reported to *Messages*. The same goes for CALLBACKS errors."
                    (lambda (callback)
                      (goto-char (point-min))
                      (condition-case err
-                         (funcall callback path (current-buffer))
+                         (funcall callback path)
                        ;; just notify errors for callbacks errors
                        (error (message "%s" (error-message-string err)) nil)))
                    callbacks)))
