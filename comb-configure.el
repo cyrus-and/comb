@@ -195,15 +195,20 @@ in the result."
 (defun comb--configuration-import (widget)
   "Import patterns for WIDGET from file."
   (lambda ()
-    (widget-value-set
-     widget (append (widget-value widget)
-                    (cdr (comb--prompt-load-value "List file: "))))
-    (widget-setup)))
+    (let (result)
+      (setq result (comb--prompt-load-value "List file: "))
+      (when (car result)
+        (widget-value-set widget (append (widget-value widget) (cdr result)))
+        (widget-setup)
+        (message "Values added from %s" (car result))))))
 
 (defun comb--configuration-export (widget)
   "Export the patterns of WIDGET to file."
   (lambda ()
-    (comb--prompt-save-value "List file: " (widget-value widget))))
+    (let (path)
+      (setq path (comb--prompt-save-value "List file: " (widget-value widget)))
+      (when path
+        (message "Values saved to %s" path)))))
 
 (provide 'comb-configure)
 
