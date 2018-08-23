@@ -115,7 +115,7 @@
 (defun comb--create-function-list-widget (placeholder)
   "Editable regex or function list widget."
   (comb--create-list-widget
-   `(function :format " %v" :value ,placeholder)))
+   `(sexp :format " %v" :value ,placeholder)))
 
 (defun comb--create-button-widget (tag action)
   "Button widget given TAG and ACTION."
