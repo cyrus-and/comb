@@ -69,6 +69,33 @@ back to resume the analysis (`l`).
 
 See the help (`h`) for a list of all the features and keybindings.
 
+### Regexps
+
+The patterns used by Comb are Emacs-flavored regexps (see the [`(elisp) Regular
+Expressions`][info-regexp] info node). The `M-x regexp-builder` utility can be
+used to interactively try the regexps before performing a search, just make sure
+to use the proper syntax (`C-c TAB RET string`) and leave out the surrounding
+`"`.
+
+[info-regexp]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Regular-Expressions.html
+
+### Callbacks
+
+Comb also accepts a list of callbacks that can be used to generate additional
+search results, e.g., coming from an external linting tool. These functions are
+executed with the `default-directory` set to the root directory and the current
+buffer set to the currently processed file, they accept a relative path as an
+argument and must return a list of ranges in the form `(BEGIN . END)`.
+
+Here is an example callback:
+
+```elisp
+(defun my-callback (filename)
+  "Match only the first occurrence of 'qwerty'."
+  (when (re-search-forward "qwerty" nil t)
+    (list (cons (match-beginning 0) (match-end 0)))))
+```
+
 ## Configuration
 
 Some faces can be configured, take a look at the `comb` configuration group
@@ -98,30 +125,3 @@ modes:
 
 See the `comb-default-keybindings` alist to obtain the functions used by the
 default keybindings.
-
-## Regexps
-
-The patterns used by Comb are Emacs-flavored regexps (see the [`(elisp) Regular
-Expressions`][info-regexp] info node). The `M-x regexp-builder` utility can be
-used to interactively try the regexps before performing a search, just make sure
-to use the proper syntax (`C-c TAB RET string`) and leave out the surrounding
-`"`.
-
-[info-regexp]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Regular-Expressions.html
-
-## Callbacks
-
-Comb also accepts a list of callbacks that can be used to generate additional
-search results, e.g., coming from an external linting tool. These functions are
-executed with the `default-directory` set to the root directory and the current
-buffer set to the currently processed file, they accept a relative path as an
-argument and must return a list of ranges in the form `(BEGIN . END)`.
-
-Here is an example callback:
-
-```elisp
-(defun my-callback (filename)
-  "Match only the first occurrence of 'qwerty'."
-  (when (re-search-forward "qwerty" nil t)
-    (list (cons (match-beginning 0) (match-end 0)))))
-```
