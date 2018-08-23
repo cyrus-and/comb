@@ -52,23 +52,23 @@
        (lambda () (interactive) (comb--configuration-search)))
      keymap)
    ;; add root directory
-   (widget-insert "In directory (absolute path):\n\n")
+   (widget-insert "In directory:\n\n")
    (setq comb--root-widget (comb--create-directory-widget))
    (widget-insert "\n")
    ;; add regexp lists
-   (widget-insert "Search for:\n\n")
+   (widget-insert "Search for regexps:\n\n")
    (setq comb--patterns-widget
          (comb--create-regex-list-widget "\\<word\\>"))
    (widget-insert "\n")
-   (widget-insert "In files matching:\n\n")
+   (widget-insert "In files matching regexps:\n\n")
    (setq comb--include-files-widget
          (comb--create-regex-list-widget "\\.extension$"))
    (widget-insert "\n")
-   (widget-insert "Skipping directories matching:\n\n")
+   (widget-insert "Skipping directories matching regexps:\n\n")
    (setq comb--exclude-paths-widget
          (comb--create-regex-list-widget "^some/directory$"))
    (widget-insert "\n")
-   (widget-insert "Including results from:\n\n")
+   (widget-insert "Including results from callbacks:\n\n")
    (setq comb--callbacks-widget
          (comb--create-function-list-widget 'ignore))
    (widget-insert "\n\n")
