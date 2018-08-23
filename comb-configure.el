@@ -70,7 +70,7 @@
    (widget-insert "\n")
    (widget-insert "Including results from callbacks:\n\n")
    (setq comb--callbacks-widget
-         (comb--create-function-list-widget 'ignore))
+         (comb--create-function-list-widget 'some-callback))
    (widget-insert "\n\n")
    ;; add search and reset buttons
    (comb--create-button-widget "(R)eset" #'comb--configuration-load-ui)
