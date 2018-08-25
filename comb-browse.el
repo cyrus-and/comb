@@ -68,12 +68,21 @@
 (defvar comb--displayed-buffer nil
   "Visited buffer containing the current result.")
 
+(defcustom comb-pulse-matches t
+  "Pulse the matches."
+  :type 'boolean
+  :group 'comb)
+
+(defface comb-pulse '((t :inherit pulse-highlight-start-face))
+  "Face used to pulse the matches."
+  :group 'comb)
+
 (defun comb--display (&optional update-only)
   "Display the current result in the Comb buffer.
 
 If UPDATE-ONLY the buffer is not recreated and the point is not
 moved, only the header line is updated."
-  (let (result relative-path path begin end buffer)
+  (let (result relative-path path begin end overlay buffer)
     ;; when a proper result has to be displayed
     (if (not (comb--valid-cursor-p))
         (setq comb--displayed-buffer nil)
@@ -105,7 +114,11 @@ moved, only the header line is updated."
         (read-only-mode 1)
         ;; highlight the match
         (when comb--displayed-buffer
-          (overlay-put (make-overlay begin end) 'face 'comb-match))
+          (setq overlay (make-overlay begin end))
+          (overlay-put overlay 'face 'comb-match)
+          ;; additionally pulse the match if requested
+          (when comb-pulse-matches
+            (pulse-momentary-highlight-region begin end 'comb-pulse)))
         ;; switch to the comb buffer
         (switch-to-buffer (current-buffer))
         ;; center the result in the current window

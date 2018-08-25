@@ -101,8 +101,8 @@ Errors in the callback execution are not fatal, they are just reported in the
 
 ## Configuration
 
-Some faces can be configured, take a look at the `comb` customization group
-(`M-x customize-group RET comb`).
+Some faces and options can be configured, take a look at the `comb`
+customization group (`M-x customize-group RET comb`).
 
 Additionally, all the keybindings in the `*Comb*` buffer can be altered by
 changing the `comb-keymap` keymap. For example, to use the arrows to navigate
