@@ -123,6 +123,7 @@ moved, only the header line is updated."
         (switch-to-buffer (current-buffer))
         ;; center the result in the current window
         (when comb--displayed-buffer
+          (setq header-line-format "") ; placeholder for recentering
           (comb--center-region begin end))))
     ;; just update the header line of the comb buffer, if any
     (when (setq buffer (get-buffer "*Comb*"))
