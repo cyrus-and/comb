@@ -77,6 +77,11 @@
   "Face used to pulse the matches."
   :group 'comb)
 
+(defcustom comb-buffer-setup-hook nil
+  "Hook used to set up the Comb buffer."
+  :type 'hook
+  :group 'comb)
+
 (defun comb--display (&optional update-only)
   "Display the current result in the Comb buffer.
 
@@ -121,8 +126,11 @@ moved, only the header line is updated."
             (pulse-momentary-highlight-region begin end 'comb-pulse)))
         ;; switch to the comb buffer
         (switch-to-buffer (current-buffer))
-        ;; center the result in the current window
+        ;; only when a real file is shown
         (when comb--displayed-buffer
+          ;; run hooks ignoring errors
+          (with-demoted-errors (run-hooks 'comb-buffer-setup-hook))
+          ;; center the result in the current window
           (setq header-line-format "") ; placeholder for recentering
           (comb--center-region begin end))))
     ;; just update the header line of the comb buffer, if any
