@@ -161,10 +161,9 @@ reported to *Messages*. The same goes for CALLBACKS errors."
                   (mapcan
                    (lambda (callback)
                      (goto-char (point-min))
-                     (condition-case err
-                         (funcall callback path)
-                       ;; just notify errors for callbacks errors
-                       (error (message "%s" (error-message-string err)) nil)))
+                     ;; just notify errors for callbacks errors
+                     (with-demoted-errors
+                         (funcall callback path)))
                    callbacks)))
         ;; just notify errors for unreadable files
         (file-error (message (error-message-string err))))
