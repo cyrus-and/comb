@@ -24,7 +24,7 @@
 
 (require 'comb-common)
 
-(require 'cl-macs)
+(require 'cl-lib)
 
 (defvar comb--session-file nil
   "Remember the loaded session so to not ask again on save.")

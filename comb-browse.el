@@ -28,7 +28,7 @@
 (require 'comb-report)
 (require 'comb-session)
 
-(require 'cl-macs)
+(require 'cl-lib)
 (require 'pulse)
 (require 'seq)
 (require 'subr-x)
