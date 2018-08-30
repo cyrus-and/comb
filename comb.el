@@ -1,4 +1,4 @@
-;;; comb.el --- Interactive grep annotation tool for manual static analysis -*- lexical-binding: t -*-
+;;; comb.el --- Interactive grep tool for manual static analysis -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2018 Andrea Cardaci <cyrus.and@gmail.com>
 ;;
