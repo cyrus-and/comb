@@ -123,7 +123,7 @@ If PATH is nil then PROMPT is used to ask the user."
 
 (defun comb--kill-buffers ()
   "Kill all the Comb buffers."
-  (kill-matching-buffers "^\\*Comb" nil t))
+  (kill-matching-buffers "^\\*Comb[*:]" nil t))
 
 (defun comb--kill-main-buffer ()
   "Kill just the main buffer."
