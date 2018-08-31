@@ -21,7 +21,7 @@
 ;; SOFTWARE.
 
 ;; Author: Andrea Cardaci <cyrus.and@gmail.com>
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;; URL: https://github.com/cyrus-and/comb
 ;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: matching
