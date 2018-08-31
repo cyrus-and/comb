@@ -1,3 +1,6 @@
+[![MELPA Stable](https://stable.melpa.org/packages/comb-badge.svg)](https://stable.melpa.org/#/comb)
+[![MELPA](https://melpa.org/packages/comb-badge.svg)](https://melpa.org/#/comb)
+
 # Comb
 
 Comb is a native Emacs Lisp solution to search, browse and annotate occurrences
@@ -11,14 +14,9 @@ asses proper matches during manual static analysis.
 
 ### [MELPA] package
 
-Waiting for [approval](https://github.com/melpa/melpa/pull/5684), use any other
-approach in the meantime.
-
-<!--
 ```
 M-x package-install RET comb
 ```
--->
 
 [MELPA]: https://melpa.org/#/getting-started
 
