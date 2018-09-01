@@ -72,8 +72,7 @@ See the help (`h`) for a list of all the features and keybindings.
 The patterns used by Comb are Emacs-flavored regexps (see the [`(elisp) Regular
 Expressions`][info-regexp] info node). The `M-x regexp-builder` utility can be
 used to interactively try the regexps before performing a search, just make sure
-to use the proper syntax (`C-c TAB RET string`) and leave out the surrounding
-`"`.
+to use the proper syntax (`C-c TAB string`) and leave out the surrounding `"`.
 
 [info-regexp]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Regular-Expressions.html
 
