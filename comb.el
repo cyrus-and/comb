@@ -1,4 +1,4 @@
-;;; comb.el --- Interactive grep tool for manual static analysis -*- lexical-binding: t -*-
+;;; comb.el --- Interactive code auditing and grep tool -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2020 Andrea Cardaci <cyrus.and@gmail.com>
 ;;
@@ -31,7 +31,7 @@
 ;; Comb is a native Emacs Lisp solution to search, browse and annotate
 ;; occurrences of regular expressions in files.  The interactive interface
 ;; allows to perform an exhaustive classification of all the results to rule out
-;; false positives and asses proper matches during manual static analysis.
+;; false positives and asses proper matches during code audit.
 
 ;;; Code:
 
@@ -39,7 +39,7 @@
 (require 'comb-common)
 
 (defgroup comb nil
-  "Interactive grep annotation tool for manual static analysis."
+  "Interactive code auditing and grep tool"
   :group 'matching)
 
 ;;;###autoload

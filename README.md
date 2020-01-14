@@ -6,7 +6,7 @@
 Comb is a native Emacs Lisp solution to search, browse and annotate occurrences
 of regular expressions in files. The interactive interface allows to perform an
 exhaustive classification of all the results to rule out false positives and
-asses proper matches during manual static analysis.
+asses proper matches during code audit.
 
 <p align="center"><img src="https://i.imgur.com/13toxVQ.png" width="804px" alt="Browse"/></p>
 
@@ -38,7 +38,7 @@ M-x package-install-file RET /path/to/comb/
 This is a quick walkthrough of some of the features of Comb. To perform a
 search:
 
-1. move to the root directory of the repository you want to analyze;
+1. move to the root directory of the repository you want to audit;
 
 2. run `M-x comb`;
 
@@ -63,7 +63,7 @@ jump to the result at point.
 <p align="center"><img src="https://i.imgur.com/KddKKrQ.png" width="628px" alt="Report"/></p>
 
 Finally it is possible to save the current session to file (`s`) and load it
-back to resume the analysis (`l`).
+back to resume the audit (`l`).
 
 See the help (`h`) for a list of all the features and keybindings.
 
