@@ -28,7 +28,7 @@
 
 (declare-function comb--display "comb-browse")
 
-(defface comb-cursor '((t :inherit highlight))
+(defface comb-cursor '((t :inherit highlight) :extend t)
   "Face used to highlight the entries in the report buffer."
   :group 'comb)
 
