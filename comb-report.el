@@ -35,6 +35,21 @@
 (defconst comb--max-context 100
   "Maximum number chars before and after the match to display in the report.")
 
+(defvar comb-report-mode-map
+  (let (keymap)
+    (setq keymap (make-sparse-keymap))
+    (define-key keymap (kbd "RET")
+      (lambda () (interactive) (comb--visit-snippet)))
+    keymap)
+  "Keymap for comb results")
+
+(define-derived-mode comb-report-mode fundamental-mode "Comb"
+  "Major mode for comb reports.
+\\{comb-report-mode-map}"
+  (setq truncate-lines nil)
+  (setq buffer-read-only t)
+  (cursor-sensor-mode))
+
 (defun comb--report ()
   "Show the results in a report format."
   (let (overlay result info snippet point)
@@ -43,18 +58,11 @@
      ;; on quit
      (kill-buffer)
      ;; keymap
-     (let (keymap)
-       (setq keymap (make-sparse-keymap))
-       (define-key keymap (kbd "RET")
-         (lambda () (interactive) (comb--visit-snippet)))
-       keymap)
-     ;; setup
-     (setq truncate-lines nil)
-     (setq buffer-read-only t)
-     (cursor-sensor-mode)
+     comb-report-mode-map
+     ;; populate the buffer
+     (comb-report-mode)
      (setq overlay (make-overlay 0 0))
      (overlay-put overlay 'face 'comb-cursor)
-     ;; populate the buffer
      (if (zerop (cdr (comb--count-results)))
          (insert (format "Nothing to show\n"))
        ;; walk the results and apply the filter
