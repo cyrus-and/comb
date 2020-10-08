@@ -47,7 +47,7 @@
     keymap)
   "Keymap for comb configuration")
 
-(define-derived-mode comb-configure-mode fundamental-mode "Comb"
+(define-derived-mode comb-configure-mode special-mode "Comb"
   "Major mode for configuring comb.
 \\{comb-configure-mode-map\\}")
 

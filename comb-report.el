@@ -43,11 +43,10 @@
     keymap)
   "Keymap for comb results")
 
-(define-derived-mode comb-report-mode fundamental-mode "Comb"
+(define-derived-mode comb-report-mode special-mode "Comb"
   "Major mode for comb reports.
 \\{comb-report-mode-map}"
   (setq truncate-lines nil)
-  (setq buffer-read-only t)
   (cursor-sensor-mode))
 
 (defun comb--report ()
