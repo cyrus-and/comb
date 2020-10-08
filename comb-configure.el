@@ -37,6 +37,20 @@
 (defvar comb--include-files-widget)
 (defvar comb--exclude-paths-widget)
 
+(defvar comb-configure-mode-map
+  (let ((keymap (make-sparse-keymap)))
+    (set-keymap-parent keymap widget-keymap)
+    (define-key keymap (kbd "R")
+      (lambda () (interactive) (comb--configuration-load-ui)))
+    (define-key keymap (kbd "S")
+      (lambda () (interactive) (comb--configuration-search)))
+    keymap)
+  "Keymap for comb configuration")
+
+(define-derived-mode comb-configure-mode fundamental-mode "Comb"
+  "Major mode for configuring comb.
+\\{comb-configure-mode-map\\}")
+
 (defun comb--configure ()
   "Show the configuration buffer."
   (comb--with-temp-buffer-window
@@ -44,13 +58,8 @@
    ;; on quit
    (comb--configuration-quit)
    ;; keymap
-   (let ((keymap (make-sparse-keymap)))
-     (set-keymap-parent keymap widget-keymap)
-     (define-key keymap (kbd "R")
-       (lambda () (interactive) (comb--configuration-load-ui)))
-     (define-key keymap (kbd "S")
-       (lambda () (interactive) (comb--configuration-search)))
-     keymap)
+   comb-configure-mode-map
+   (comb-configure-mode)
    ;; add root directory
    (widget-insert "In directory:\n\n")
    (setq comb--root-widget
