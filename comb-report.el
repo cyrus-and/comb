@@ -102,6 +102,10 @@
       ;; or deleted)
       (ignore-errors
         (insert-file-contents-literally path)
+        ;; XXX this is faster than `decode-coding-inserted-region' but it
+        ;; may result in a wrong guesswork theoretically (still not
+        ;; reproducible in practice); also see comb-search.el
+        (decode-coding-region (point-min) (point-max) 'undecided)
         (set-text-properties begin end '(face comb-match))
         (setq file-ok t))
       (goto-char begin)

@@ -151,7 +151,7 @@ reported to *Messages*. The same goes for CALLBACKS errors."
             (insert-file-contents-literally path)
             ;; XXX this is faster than `decode-coding-inserted-region' but it
             ;; may result in a wrong guesswork theoretically (still not
-            ;; reproducible in practice)
+            ;; reproducible in practice); also see comb-report.el
             (decode-coding-region (point-min) (point-max) 'undecided)
             ;; find the occurrences for the current file catching errors
             (when pattern
