@@ -48,8 +48,9 @@
   "Keymap for comb configuration")
 
 (define-derived-mode comb-configure-mode special-mode "Comb"
-  "Major mode for configuring comb.
-\\{comb-configure-mode-map\\}")
+  "Major mode for comb configuration.
+
+\\{comb-report-mode-map}")
 
 (defun comb--configure ()
   "Show the configuration buffer."

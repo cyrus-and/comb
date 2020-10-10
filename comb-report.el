@@ -45,6 +45,7 @@
 
 (define-derived-mode comb-report-mode special-mode "Comb"
   "Major mode for comb reports.
+
 \\{comb-report-mode-map}"
   (setq truncate-lines nil)
   (cursor-sensor-mode))
