@@ -44,7 +44,9 @@
       (lambda () (interactive) (comb--configuration-load-ui)))
     (define-key keymap (kbd "S")
       (lambda () (interactive) (comb--configuration-search)))
-    keymap)
+    (define-key keymap (kbd "q")
+      (lambda () (interactive) (comb--configuration-quit)))
+   keymap)
   "Keymap for comb configuration")
 
 (define-derived-mode comb-configure-mode special-mode "Comb"
@@ -57,11 +59,8 @@
   "Show the configuration buffer."
   (comb--with-temp-buffer-window
    "*Comb: configure*"
-   ;; on quit
-   (comb--configuration-quit)
-   ;; keymap
-   comb-configure-mode-map
-   (comb-configure-mode)
+   ;; major mode
+   comb-configure-mode
    ;; add root directory
    (widget-insert "In directory:\n\n")
    (setq comb--root-widget

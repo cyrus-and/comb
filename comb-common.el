@@ -74,25 +74,16 @@
     (set-window-configuration comb--window-configuration)
     (setq comb--window-configuration nil)))
 
-(defmacro comb--with-temp-buffer-window (name on-exit keymap &rest body)
-  "Create a disposable buffer named NAME.
-
-The ON-EXIT form is executed when the user presses 'q'.
-
-If KEYMAP is not nil the use it as a parent keymap.
+(defmacro comb--with-temp-buffer-window (name mode &rest body)
+  "Create a disposable buffer named NAME having major mode MODE.
 
 BODY is executed in the context of the newly created buffer."
   ;; show a fresh new buffer
   `(let ((name ,name))
      (ignore-errors (kill-buffer name))
      (with-current-buffer (switch-to-buffer name)
-       ;; setup keymap
-       (let ((keymap (make-sparse-keymap)))
-         (set-keymap-parent keymap ,keymap)
-         (suppress-keymap keymap)
-         (define-key keymap (kbd "q")
-           (lambda () (interactive) ,on-exit))
-         (use-local-map keymap))
+       ;; switch to major mode
+       (,mode)
        ;; user body
        (let ((inhibit-read-only t)) ,@body)
        (set-buffer-modified-p nil))))

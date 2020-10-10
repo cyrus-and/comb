@@ -55,12 +55,9 @@
   (let (overlay result info snippet point)
     (comb--with-temp-buffer-window
      "*Comb: report*"
-     ;; on quit
-     (kill-buffer)
-     ;; keymap
-     comb-report-mode-map
+     ;; major mode
+     comb-report-mode
      ;; populate the buffer
-     (comb-report-mode)
      (setq overlay (make-overlay 0 0))
      (overlay-put overlay 'face 'comb-cursor)
      (if (zerop (cdr (comb--count-results)))

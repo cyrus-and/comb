@@ -393,10 +393,8 @@ moved, only the header line is updated."
   (interactive)
   (comb--with-temp-buffer-window
    "*Comb: help*"
-   ;; on quit
-   (kill-buffer)
-   ;; keymap
-   nil
+   ;; major mode
+   special-mode
    ;; setup
    (setq buffer-read-only t)
    (visual-line-mode)
