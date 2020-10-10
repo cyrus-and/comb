@@ -41,10 +41,10 @@
     (define-key keymap (kbd "RET")
       (lambda () (interactive) (comb--visit-snippet)))
     keymap)
-  "Keymap for comb results")
+  "Keymap for Comb results")
 
 (define-derived-mode comb-report-mode special-mode "Comb"
-  "Major mode for comb reports.
+  "Major mode for Comb reports.
 
 \\{comb-report-mode-map}"
   (setq truncate-lines nil)

@@ -50,7 +50,7 @@
   "Keymap for comb configuration")
 
 (define-derived-mode comb-configure-mode special-mode "Comb"
-  "Major mode for comb configuration.
+  "Major mode for Comb configuration.
 
 \\{comb-report-mode-map}"
   (setq buffer-read-only nil))
