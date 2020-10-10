@@ -49,7 +49,7 @@
 (define-derived-mode comb-configure-mode special-mode "Comb"
   "Major mode for Comb configuration.
 
-\\{comb-report-mode-map}"
+\\{comb-configure-mode-map}"
   (setq buffer-read-only nil))
 
 (defun comb--configure ()
