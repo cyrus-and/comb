@@ -40,13 +40,10 @@
 (defvar comb-configure-mode-map
   (let ((keymap (make-sparse-keymap)))
     (set-keymap-parent keymap widget-keymap)
-    (define-key keymap (kbd "R")
-      (lambda () (interactive) (comb--configuration-load-ui)))
-    (define-key keymap (kbd "S")
-      (lambda () (interactive) (comb--configuration-search)))
-    (define-key keymap (kbd "q")
-      (lambda () (interactive) (comb--configuration-quit)))
-   keymap)
+    (define-key keymap (kbd "R") #'comb--configuration-load-ui)
+    (define-key keymap (kbd "S") #'comb--configuration-search)
+    (define-key keymap (kbd "q") #'comb--configuration-quit)
+    keymap)
   "Keymap for comb configuration")
 
 (define-derived-mode comb-configure-mode special-mode "Comb"
@@ -168,6 +165,7 @@ in the result."
 
 (defun comb--configuration-load-ui ()
   "Populate the GUI using the current session."
+  (interactive)
   (save-mark-and-excursion
     (widget-value-set comb--root-widget (comb--root))
     (widget-value-set comb--patterns-widget (comb--patterns))
@@ -188,6 +186,7 @@ in the result."
 
 (defun comb--configuration-search ()
   "Start a new search from the configuration buffer."
+  (interactive)
   (comb--configuration-save-ui)
   (redisplay) ; allow to show the unmodified mark immediately
   (if (comb--search (comb--pattern-list-merge (comb--patterns))
@@ -199,6 +198,7 @@ in the result."
 
 (defun comb--configuration-quit ()
   "Quit the configuration buffer committing changes to the session."
+  (interactive)
   (comb--configuration-save-ui)
   (kill-buffer))
 

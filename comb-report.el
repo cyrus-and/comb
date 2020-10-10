@@ -38,8 +38,7 @@
 (defvar comb-report-mode-map
   (let (keymap)
     (setq keymap (make-sparse-keymap))
-    (define-key keymap (kbd "RET")
-      (lambda () (interactive) (comb--visit-snippet)))
+    (define-key keymap (kbd "RET") #'comb--visit-snippet)
     keymap)
   "Keymap for Comb results")
 
@@ -128,6 +127,7 @@
 
 (defun comb--visit-snippet ()
   "Visit the snippet under the point."
+  (interactive)
   (let (cursor)
     (setq cursor (get-text-property (point) 'cursor))
     (if (null cursor)
