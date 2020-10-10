@@ -88,10 +88,10 @@
                                             "Function or lambda"))
    (widget-insert "\n\n")
    ;; add search and reset buttons
-   (comb--create-button-widget "(R)eset" #'comb--configuration-load-ui
+   (comb--create-button-widget "Reset" #'comb--configuration-load-ui
                                "Drop unsaved modifications")
    (widget-insert " ")
-   (comb--create-button-widget "(S)earch" #'comb--configuration-search
+   (comb--create-button-widget "Search" #'comb--configuration-search
                                "Perform a new search")
    (widget-insert "\n")
    ;; finalize
